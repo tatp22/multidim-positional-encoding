@@ -46,7 +46,7 @@ Where:
 i,j,k is in [0, D/6), where D is the size of the ch dimension
 ```
 
-This is just a natural extension of the 3D positional encoding used in [this](https://arxiv.org/pdf/1908.11415.pdf) paper.
+This is just a natural extension of the 2D positional encoding used in [this](https://arxiv.org/pdf/1908.11415.pdf) paper.
 
 Don't worry if the input is not divisible by 2 (1D), 4 (2D), or 6 (3D); all the necessary padding will be taken care of.
 
