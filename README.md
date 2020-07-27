@@ -19,15 +19,17 @@ i,j,k is in [0, D/6), where D is the size of the ch dimension
 
 This is just a natural extension of the 3D positional encoding used in [this](https://arxiv.org/pdf/1908.11415.pdf) paper.
 
-Don't worry if the input is not divisible by 6; all necessary padding will be taken care of.
+Don't worry if the input is not divisible by 6; all necessary padding will be taken care of. (WIP)
 
 ## Usage:
 
-```
+```python3
 import torch
+from pos_enc_3d import PositionalEmbedding3D
 
-tensor = torch.zeros((4,8,16,32,64)) # Or whatever size you want it to be
-positional_encoding = pos_enc_3d(tensor)
+p_enc = PositionalEmbedding3D(12)
+x = torch.zeros((1,5,6,4,12))
+print(p_enc(x))
 ```
 
 ## Thank you
