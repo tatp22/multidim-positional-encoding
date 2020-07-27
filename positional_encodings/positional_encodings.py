@@ -3,12 +3,12 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-class PositionalEmbedding1D(nn.Module):
+class PositionalEncoding1D(nn.Module):
     def __init__(self, channels):
         """
         :param channels: The last dimension of the tensor you want to apply pos emb to.
         """
-        super(PositionalEmbedding1D, self).__init__()
+        super(PositionalEncoding1D, self).__init__()
         self.channels = channels
         inv_freq = 1. / (10000 ** (torch.arange(0, channels, 2).float() / channels))
         self.register_buffer('inv_freq', inv_freq)
@@ -29,12 +29,12 @@ class PositionalEmbedding1D(nn.Module):
 
         return emb[None,:,:orig_ch]
 
-class PositionalEmbedding2D(nn.Module):
+class PositionalEncoding2D(nn.Module):
     def __init__(self, channels):
         """
         :param channels: The last dimension of the tensor you want to apply pos emb to.
         """
-        super(PositionalEmbedding2D, self).__init__()
+        super(PositionalEncoding2D, self).__init__()
         channels = int(np.ceil(channels/2))
         self.channels = channels
         inv_freq = 1. / (10000 ** (torch.arange(0, channels, 2).float() / channels))
@@ -60,12 +60,12 @@ class PositionalEmbedding2D(nn.Module):
 
         return emb[None,:,:,:orig_ch]
 
-class PositionalEmbedding3D(nn.Module):
+class PositionalEncoding3D(nn.Module):
     def __init__(self, channels):
         """
         :param channels: The last dimension of the tensor you want to apply pos emb to.
         """
-        super(PositionalEmbedding3D, self).__init__()
+        super(PositionalEncoding3D, self).__init__()
         channels = int(np.ceil(channels/3))
         self.channels = channels
         inv_freq = 1. / (10000 ** (torch.arange(0, channels, 2).float() / channels))

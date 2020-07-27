@@ -1,6 +1,12 @@
 # 1D, 2D, and 3D Sinusodal Postional Encoding Pytorch
 
-This is an implemenation of 1D, 2D, and 3D sinusodal positional encoding, being able to encode on tensors of the form `(batchsize, x, ch)`, `(batchsize, x, y, ch)`, and `(batchsize, x, y, z, ch)`, where the positional embeddings will be added to the `ch` dimension. The [Attention is All You Need](https://arxiv.org/pdf/1706.03762.pdf) allowed for positional encoding in only one dimension, however, this works to extend this to 2 and 3 dimensions.
+This is an implemenation of 1D, 2D, and 3D sinusodal positional encoding, being able to encode on tensors of the form `(batchsize, x, ch)`, `(batchsize, x, y, ch)`, and `(batchsize, x, y, z, ch)`, where the positional encodings will be added to the `ch` dimension. The [Attention is All You Need](https://arxiv.org/pdf/1706.03762.pdf) allowed for positional encoding in only one dimension, however, this works to extend this to 2 and 3 dimensions.
+
+To install, simply run:
+
+```
+pip install positional-encodings
+```
 
 Specifically, the formula for inserting the positional encoding will be as follows:
 
@@ -48,17 +54,17 @@ Don't worry if the input is not divisible by 2 (1D), 4 (2D), or 6 (3D); all the 
 
 ```python3
 import torch
-from pos_enc_multidim import PositionalEmbedding1D, PositionalEmbedding2D, PositionalEmbedding3D
+from pos_enc_multidim import PositionalEncoding1D, PositionalEncoding2D, PositionalEncoding3D
 
-p_enc_1d = PositionalEmbedding1D(10)
+p_enc_1d = PositionalEncoding1D(10)
 x = torch.zeros((1,6,10))
 print(p_enc_1d(x).shape) # (1, 6, 10)
 
-p_enc_2d = PositionalEmbedding2D(8)
+p_enc_2d = PositionalEncoding2D(8)
 y = torch.zeros((1,6,2,8))
 print(p_enc_2d(y).shape) # (1, 6, 2, 8)
 
-p_enc_3d = PositionalEmbedding3D(11)
+p_enc_3d = PositionalEncoding3D(11)
 z = torch.zeros((1,5,6,4,11))
 print(p_enc_3d(z).shape) # (1, 5, 6, 4, 11)
 ```
