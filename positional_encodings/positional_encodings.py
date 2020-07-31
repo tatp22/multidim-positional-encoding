@@ -91,7 +91,6 @@ class PositionalEncoding3D(nn.Module):
         emb_y = torch.cat((sin_inp_y.sin(), sin_inp_y.cos()), dim=-1).unsqueeze(1)
         emb_z = torch.cat((sin_inp_z.sin(), sin_inp_z.cos()), dim=-1)
         emb = torch.zeros((x,y,z,self.channels*3),device=tensor.device).type(tensor.type())
-        print(emb_x.shape, emb_y.shape, emb_z.shape)
         emb[:,:,:,:self.channels] = emb_x
         emb[:,:,:,self.channels:2*self.channels] = emb_y
         emb[:,:,:,2*self.channels:] = emb_z
