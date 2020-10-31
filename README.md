@@ -7,9 +7,9 @@ added to the `ch` dimension. The [Attention is All You
 Need](https://arxiv.org/pdf/1706.03762.pdf) allowed for positional encoding in
 only one dimension, however, this works to extend this to 2 and 3 dimensions.
 
-New: This also works on tensors of the form `(batchsize, x, ch)`, etc. For
+New: This also works on tensors of the form `(batchsize, ch, x)`, etc. For
 inputs of this type, include the word `Permute` before the number in the class;
-e.g. for a 1D input of size `(batchsize, x, ch)`, do
+e.g. for a 1D input of size `(batchsize, ch, x)`, do
 `PositionalEncodingPermute1D` instead of `PositionalEncoding1D`.
 
 To install, simply run:
