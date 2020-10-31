@@ -29,6 +29,19 @@ class PositionalEncoding1D(nn.Module):
 
         return emb[None,:,:orig_ch]
 
+class PositionalEncodingPermute1D(nn.Module):
+    def __init__(self, channels):
+        """
+        Accepts (batchsize, ch, x) instead of (batchsize, x, ch)        
+        """
+        super(PositionalEncodingPermute1D, self).__init__()
+        self.penc = PositionalEncoding1D(channels)
+
+    def forward(self, tensor):
+        tensor = tensor.permute(0,2,1)
+        enc = self.penc(tensor)
+        return enc.permute(0,2,1)
+
 class PositionalEncoding2D(nn.Module):
     def __init__(self, channels):
         """
@@ -59,6 +72,20 @@ class PositionalEncoding2D(nn.Module):
         emb[:,:,self.channels:2*self.channels] = emb_y
 
         return emb[None,:,:,:orig_ch]
+
+class PositionalEncodingPermute2D(nn.Module):
+    def __init__(self, channels):
+        """
+        Accepts (batchsize, ch, x, y) instead of (batchsize, x, y, ch)        
+        """
+        super(PositionalEncodingPermute2D, self).__init__()
+        self.penc = PositionalEncoding2D(channels)
+
+    def forward(self, tensor):
+        tensor = tensor.permute(0,2,3,1)
+        enc = self.penc(tensor)
+        return enc.permute(0,3,1,2)
+
 
 class PositionalEncoding3D(nn.Module):
     def __init__(self, channels):
@@ -96,3 +123,16 @@ class PositionalEncoding3D(nn.Module):
         emb[:,:,:,2*self.channels:] = emb_z
 
         return emb[None,:,:,:,:orig_ch]
+
+class PositionalEncodingPermute3D(nn.Module):
+    def __init__(self, channels):
+        """
+        Accepts (batchsize, ch, x, y, z) instead of (batchsize, x, y, z, ch)        
+        """
+        super(PositionalEncodingPermute3D, self).__init__()
+        self.penc = PositionalEncoding3D(channels)
+
+    def forward(self, tensor):
+        tensor = tensor.permute(0,2,3,4,1)
+        enc = self.penc(tensor)
+        return enc.permute(0,4,1,2,3)
