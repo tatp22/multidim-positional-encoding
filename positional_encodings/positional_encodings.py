@@ -20,14 +20,14 @@ class PositionalEncoding1D(nn.Module):
         """
         if len(tensor.shape) != 3:
             raise RuntimeError("The input tensor has to be 3d!")
-        _, x, orig_ch = tensor.shape
+        batch_size, x, orig_ch = tensor.shape
         pos_x = torch.arange(x, device=tensor.device).type(self.inv_freq.type())
         sin_inp_x = torch.einsum("i,j->ij", pos_x, self.inv_freq)
         emb_x = torch.cat((sin_inp_x.sin(), sin_inp_x.cos()), dim=-1)
         emb = torch.zeros((x,self.channels),device=tensor.device).type(tensor.type())
         emb[:,:self.channels] = emb_x
 
-        return emb[None,:,:orig_ch]
+        return emb[None,:,:orig_ch].repeat(batch_size, 1, 1)
 
 class PositionalEncodingPermute1D(nn.Module):
     def __init__(self, channels):
@@ -60,7 +60,7 @@ class PositionalEncoding2D(nn.Module):
         """
         if len(tensor.shape) != 4:
             raise RuntimeError("The input tensor has to be 4d!")
-        _, x, y, orig_ch = tensor.shape
+        batch_size, x, y, orig_ch = tensor.shape
         pos_x = torch.arange(x, device=tensor.device).type(self.inv_freq.type())
         pos_y = torch.arange(y, device=tensor.device).type(self.inv_freq.type())
         sin_inp_x = torch.einsum("i,j->ij", pos_x, self.inv_freq)
@@ -71,7 +71,7 @@ class PositionalEncoding2D(nn.Module):
         emb[:,:,:self.channels] = emb_x
         emb[:,:,self.channels:2*self.channels] = emb_y
 
-        return emb[None,:,:,:orig_ch]
+        return emb[None,:,:,:orig_ch].repeat(batch_size, 1, 1, 1)
 
 class PositionalEncodingPermute2D(nn.Module):
     def __init__(self, channels):
@@ -107,7 +107,7 @@ class PositionalEncoding3D(nn.Module):
         """
         if len(tensor.shape) != 5:
             raise RuntimeError("The input tensor has to be 5d!")
-        _, x, y, z, orig_ch = tensor.shape
+        batch_size, x, y, z, orig_ch = tensor.shape
         pos_x = torch.arange(x, device=tensor.device).type(self.inv_freq.type())
         pos_y = torch.arange(y, device=tensor.device).type(self.inv_freq.type())
         pos_z = torch.arange(z, device=tensor.device).type(self.inv_freq.type())
@@ -122,7 +122,7 @@ class PositionalEncoding3D(nn.Module):
         emb[:,:,:,self.channels:2*self.channels] = emb_y
         emb[:,:,:,2*self.channels:] = emb_z
 
-        return emb[None,:,:,:,:orig_ch]
+        return emb[None,:,:,:,:orig_ch].repeat(batch_size, 1, 1, 1, 1)
 
 class PositionalEncodingPermute3D(nn.Module):
     def __init__(self, channels):
