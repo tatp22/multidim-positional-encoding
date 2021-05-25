@@ -27,7 +27,7 @@ PE(x,2i+1) = cos(x/10000^(2i/D))
 
 Where:
 x is a point in 2d space
-i is in [0, D/2), where D is the size of the ch dimension
+i is an integer in [0, D/2), where D is the size of the ch dimension
 ```
 
 2D:
@@ -39,7 +39,7 @@ PE(x,y,2j+1+D/2) = cos(y/10000^(4j/D))
 
 Where:
 (x,y) is a point in 2d space
-i,j is in [0, D/4), where D is the size of the ch dimension
+i,j is an integer in [0, D/4), where D is the size of the ch dimension
 ```
 
 3D:
@@ -53,7 +53,7 @@ PE(x,y,z,2k+1+2D/3) = cos(z/10000^(6k/D))
 
 Where:
 (x,y,z) is a point in 3d space
-i,j,k is in [0, D/6), where D is the size of the ch dimension
+i,j,k is an integer in [0, D/6), where D is the size of the ch dimension
 ```
 
 This is just a natural extension of the 2D positional encoding used in [this](https://arxiv.org/pdf/1908.11415.pdf) paper.
