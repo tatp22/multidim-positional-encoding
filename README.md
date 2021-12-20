@@ -98,6 +98,14 @@ z = torch.zeros((1,11,5,6,4))
 print(p_enc_3d(z).shape) # (1, 11, 5, 6, 4)
 ```
 
+### Tensorflow Keras
+import tensorflow as tf
+from positional_encodings import TFPositionalEncoding2D
+
+p_enc_2d = TFPositionalEncoding2D(170)
+y = tf.zeros((1,8,6,2))
+print(p_enc_2d(y).shape) # (1, 8, 6, 2)
+
 ## Thank you
 
 Thank you for [this](https://github.com/wzlxjtu/PositionalEncoding2D) repo for inspriration of this method.
