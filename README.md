@@ -1,4 +1,4 @@
-# 1D, 2D, and 3D Sinusodal Postional Encoding Pytorch
+# 1D, 2D, and 3D Sinusoidal Postional Encoding (Pytorch and Tensorflow)
 
 This is an implemenation of 1D, 2D, and 3D sinusodal positional encoding, being
 able to encode on tensors of the form `(batchsize, x, ch)`, `(batchsize, x, y,
