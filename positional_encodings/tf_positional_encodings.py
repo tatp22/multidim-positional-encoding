@@ -1,6 +1,13 @@
 import tensorflow as tf
 import numpy as np
 
+class TFAddPositionalEncoding2D(tf.keras.layers.Layer):
+    def __init__(self, channels, dtype=tf.float32):
+        self.posEncoding = TFPositionalEncoding2D(channels, dtype)
+
+    @tf.function
+    def call(self, inputs):
+        return inputs + self.posEncoding(inputs)
 
 class TFPositionalEncoding2D(tf.keras.layers.Layer):
     def __init__(self, channels, dtype=tf.float32):
