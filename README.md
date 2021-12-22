@@ -105,12 +105,12 @@ import tensorflow as tf
 from positional_encodings import TFPositionalEncoding2D
 
 # Returns the position encoding only
-p_enc_2d = TFPositionalEncoding2D(170)
+p_enc_2d = TFPositionalEncoding2D(170, return_format="pos")
 y = tf.zeros((1,8,6,2))
 print(p_enc_2d(y).shape) # (1, 8, 6, 2)
 
 # Return the inputs with the position encoding added
-add_p_enc_2d = TFAddPositionalEncoding2D(170)
+add_p_enc_2d = TFPositionalEncoding2D(170, return_format="prod")
 y = tf.ones((1,8,6,2))
 print(add_p_enc_2d(y) - p_enc_2d(y)) # tf.ones((1,8,6,2))
 ```
