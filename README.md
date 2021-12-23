@@ -110,7 +110,7 @@ y = tf.zeros((1,8,6,2))
 print(p_enc_2d(y).shape) # (1, 8, 6, 2)
 
 # Return the inputs with the position encoding added
-add_p_enc_2d = TFPositionalEncoding2D(170, return_format="prod")
+add_p_enc_2d = TFPositionalEncoding2D(170, return_format="sum")
 y = tf.ones((1,8,6,2))
 print(add_p_enc_2d(y) - p_enc_2d(y)) # tf.ones((1,8,6,2))
 ```

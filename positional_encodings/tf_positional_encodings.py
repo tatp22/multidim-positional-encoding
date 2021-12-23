@@ -2,21 +2,21 @@ import tensorflow as tf
 import numpy as np
 
 class TFPositionalEncoding2D(tf.keras.layers.Layer):
-    def __init__(self, channels:int, return_format:str="prod", dtype=tf.float32):
+    def __init__(self, channels:int, return_format:str="sum", dtype=tf.float32):
         """
         Args:
             channels int: The last dimension of the tensor you want to apply pos emb to.
 
         Keyword Args:
-            return_format str: Return either the position encoding "pos" or the product
-                of the inputs with the position encoding "prod". Default is "prod".
+            return_format str: Return either the position encoding "pos" or the sum
+                of the inputs with the position encoding "sum". Default is "sum".
             dtype: output type of the encodings. Default is "tf.float32".
 
         """
         super(TFPositionalEncoding2D, self).__init__()
         return_formats = {
             "pos": 0,
-            "prod": 1
+            "sum": 1
         }
         if return_format not in return_formats:
             raise ValueError(f'"{return_format}" is an unkown return format. Value must be in {[key for key in return_formats]}')
