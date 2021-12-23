@@ -2,25 +2,22 @@ import tensorflow as tf
 import numpy as np
 
 class TFPositionalEncoding2D(tf.keras.layers.Layer):
-    def __init__(self, channels:int, return_format:str="sum", dtype=tf.float32):
+    def __init__(self, channels:int, return_format:str="pos", dtype=tf.float32):
         """
         Args:
             channels int: The last dimension of the tensor you want to apply pos emb to.
 
         Keyword Args:
             return_format str: Return either the position encoding "pos" or the sum
-                of the inputs with the position encoding "sum". Default is "sum".
+                of the inputs with the position encoding "sum". Default is "pos".
             dtype: output type of the encodings. Default is "tf.float32".
 
         """
         super(TFPositionalEncoding2D, self).__init__()
-        return_formats = {
-            "pos": 0,
-            "sum": 1
-        }
-        if return_format not in return_formats:
-            raise ValueError(f'"{return_format}" is an unkown return format. Value must be in {[key for key in return_formats]}')
-        self.return_format = return_formats[return_format]
+        if return_format not in ["pos", "sum"]:
+            raise ValueError(f'"{return_format}" is an unkown return format. Value must be "pos" or "sum')
+        self.return_format = return_format
+            
         self.channels = int(2 * np.ceil(channels/4))
         self.inv_freq = np.float32(1 / np.power(10000, np.arange(0, self.channels, 2) / np.float32(self.channels)))
         
@@ -48,7 +45,7 @@ class TFPositionalEncoding2D(tf.keras.layers.Layer):
         emb_y = tf.tile(emb_y, (x,1,1))
         emb = tf.concat((emb_x, emb_y),-1)
         pos_enc = tf.repeat(emb[None, :, :, :org_channels], tf.shape(inputs)[0], axis=0)
-        if self.return_format == 0:
+        if self.return_format == "pos":
             return pos_enc
-        elif self.return_format == 1:
+        elif self.return_format == "sum":
             return inputs + pos_enc
