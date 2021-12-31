@@ -1,6 +1,7 @@
+import numpy as np
 import tensorflow as tf
 import torch
-import numpy as np
+
 from positional_encodings import *
 
 tf.config.experimental_run_functions_eagerly(True)

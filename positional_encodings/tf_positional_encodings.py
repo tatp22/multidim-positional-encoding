@@ -1,5 +1,5 @@
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
 
 
 class TFPositionalEncoding2D(tf.keras.layers.Layer):
