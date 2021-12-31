@@ -2,6 +2,7 @@
 
 ![Code Coverage](./svgs/cov.svg)
 [![PyPI version](https://badge.fury.io/py/positional-encodings.svg)](https://badge.fury.io/py/positional-encodings)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 This is an implemenation of 1D, 2D, and 3D sinusodal positional encoding, being
 able to encode on tensors of the form `(batchsize, x, ch)`, `(batchsize, x, y,
