@@ -1,6 +1,7 @@
 # 1D, 2D, and 3D Sinusoidal Postional Encoding (Pytorch and Tensorflow)
 
 ![Code Coverage](./svgs/cov.svg)
+[![PyPI version](https://badge.fury.io/py/positional-encodings.svg)](https://badge.fury.io/py/positional-encodings)
 
 This is an implemenation of 1D, 2D, and 3D sinusodal positional encoding, being
 able to encode on tensors of the form `(batchsize, x, ch)`, `(batchsize, x, y,
