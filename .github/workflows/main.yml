@@ -25,7 +25,7 @@ jobs:
         run: pytest -vv --cov=positional_encodings/
       - name: Run coverage report
         run: coverage-badge -o svgs/cov.svg -f
-      - name: Reformat code to PEP 8
-        run: black .
-      - name: Sort all imports
-        run: isort .
+      - name: Reformat code to black check
+        run: black --check .
+      - name: Sort all imports check
+        run: isort --check .
