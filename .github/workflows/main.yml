@@ -28,4 +28,4 @@ jobs:
       - name: Reformat code to black check
         run: black --check .
       - name: Sort all imports check
-        run: isort --check .
+        run: isort --check . --skip=__init__.py
