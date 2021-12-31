@@ -22,6 +22,6 @@ jobs:
           pip install -r requirements.txt
           pip install coverage-badge
       - name: Test with pytest
-        run: pytest -vv
+        run: pytest -vv --cov=positional-encodings/
       - name: Run coverage report
         run: coverage-badge -o svgs/cov.svg
