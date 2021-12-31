@@ -3,6 +3,8 @@ import torch
 import numpy as np
 from positional_encodings import *
 
+tf.config.experimental_run_functions_eagerly(True)
+
 def test_torch_1d_correct_shape():
     p_enc_1d = PositionalEncoding1D(10)
     x = torch.zeros((1,6,10))
