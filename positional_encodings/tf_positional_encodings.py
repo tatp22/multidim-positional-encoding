@@ -15,11 +15,6 @@ class TFPositionalEncoding2D(tf.keras.layers.Layer):
 
         """
         super(TFPositionalEncoding2D, self).__init__()
-        if return_format not in ["pos", "sum"]:
-            raise ValueError(
-                f'"{return_format}" is an unkown return format. Value must be "pos" or "sum'
-            )
-        self.return_format = return_format
 
         self.channels = int(2 * np.ceil(channels / 4))
         self.inv_freq = np.float32(
@@ -52,8 +47,4 @@ class TFPositionalEncoding2D(tf.keras.layers.Layer):
         emb_x = tf.tile(emb_x, (1, y, 1))
         emb_y = tf.tile(emb_y, (x, 1, 1))
         emb = tf.concat((emb_x, emb_y), -1)
-        pos_enc = tf.repeat(emb[None, :, :, :org_channels], tf.shape(inputs)[0], axis=0)
-        if self.return_format == "pos":
-            return pos_enc
-        elif self.return_format == "sum":
-            return inputs + pos_enc
+        return tf.repeat(emb[None, :, :, :org_channels], tf.shape(inputs)[0], axis=0)
