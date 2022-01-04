@@ -22,69 +22,29 @@ To install, simply run:
 pip install positional-encodings
 ```
 
-Specifically, the formula for inserting the positional encoding will be as follows:
-
-1D:
-```
-PE(x,2i) = sin(x/10000^(2i/D))
-PE(x,2i+1) = cos(x/10000^(2i/D))
-
-Where:
-x is a point in 2d space
-i is an integer in [0, D/2), where D is the size of the ch dimension
-```
-
-2D:
-```
-PE(x,y,2i) = sin(x/10000^(4i/D))
-PE(x,y,2i+1) = cos(x/10000^(4i/D))
-PE(x,y,2j+D/2) = sin(y/10000^(4j/D))
-PE(x,y,2j+1+D/2) = cos(y/10000^(4j/D))
-
-Where:
-(x,y) is a point in 2d space
-i,j is an integer in [0, D/4), where D is the size of the ch dimension
-```
-
-3D:
-```
-PE(x,y,z,2i) = sin(x/10000^(6i/D))
-PE(x,y,z,2i+1) = cos(x/10000^(6i/D))
-PE(x,y,z,2j+D/3) = sin(y/10000^(6j/D))
-PE(x,y,z,2j+1+D/3) = cos(y/10000^(6j/D))
-PE(x,y,z,2k+2D/3) = sin(z/10000^(6k/D))
-PE(x,y,z,2k+1+2D/3) = cos(z/10000^(6k/D))
-
-Where:
-(x,y,z) is a point in 3d space
-i,j,k is an integer in [0, D/6), where D is the size of the ch dimension
-```
-
-The 3D formula is just a natural extension of the 2D positional encoding used
-in [this](https://arxiv.org/pdf/1908.11415.pdf) paper.
-
-Don't worry if the input is not divisible by 2 (1D), 4 (2D), or 6 (3D); all the
-necessary padding will be taken care of.
-
 ## Usage (PyTorch):
 
 The repo comes with the three main positional encoding models,
-`PositionalEncoding{1,2,3}D`. In addition, there is a
-`Summer(PositionalEncoding{1,2,3}D)` that will add the input tensor to the
-positional encodings.
+`PositionalEncoding{1,2,3}D`. In addition, there is a `Summer` class that adds
+the input tensor to the positional encodings. See the first example for more info.
 
 ```python3
 import torch
 from positional_encodings import PositionalEncoding1D, PositionalEncoding2D, PositionalEncoding3D
 
+# Returns the position encoding only
 p_enc_1d_model = PositionalEncoding1D(10)
+
+# Return the inputs with the position encoding added
 p_enc_1d_model_sum = Summer(PositionalEncoding1D(10))
 
 x = torch.rand(1,6,10)
-penc = p_enc_1d_model(x) # penc.shape == (1, 6, 10)
+penc_no_sum = p_enc_1d_model(x) # penc_no_sum.shape == (1, 6, 10)
 penc_sum = p_enc_1d_model_sum(x)
-print(penc + x == penc_sum)
+print(penc_no_sum + x == penc_sum) # True
+```
 
+```python3
 p_enc_2d = PositionalEncoding2D(8)
 y = torch.zeros((1,6,2,8))
 print(p_enc_2d(y).shape) # (1, 6, 2, 8)
@@ -128,6 +88,52 @@ add_p_enc_2d = TFSummer(TFPositionalEncoding2D(170))
 y = tf.ones((1,8,6,2))
 print(add_p_enc_2d(y) - p_enc_2d(y)) # tf.ones((1,8,6,2))
 ```
+
+## Formulas
+
+The formula for inserting the positional encoding are as follows:
+
+1D:
+```
+PE(x,2i) = sin(x/10000^(2i/D))
+PE(x,2i+1) = cos(x/10000^(2i/D))
+
+Where:
+x is a point in 2d space
+i is an integer in [0, D/2), where D is the size of the ch dimension
+```
+
+2D:
+```
+PE(x,y,2i) = sin(x/10000^(4i/D))
+PE(x,y,2i+1) = cos(x/10000^(4i/D))
+PE(x,y,2j+D/2) = sin(y/10000^(4j/D))
+PE(x,y,2j+1+D/2) = cos(y/10000^(4j/D))
+
+Where:
+(x,y) is a point in 2d space
+i,j is an integer in [0, D/4), where D is the size of the ch dimension
+```
+
+3D:
+```
+PE(x,y,z,2i) = sin(x/10000^(6i/D))
+PE(x,y,z,2i+1) = cos(x/10000^(6i/D))
+PE(x,y,z,2j+D/3) = sin(y/10000^(6j/D))
+PE(x,y,z,2j+1+D/3) = cos(y/10000^(6j/D))
+PE(x,y,z,2k+2D/3) = sin(z/10000^(6k/D))
+PE(x,y,z,2k+1+2D/3) = cos(z/10000^(6k/D))
+
+Where:
+(x,y,z) is a point in 3d space
+i,j,k is an integer in [0, D/6), where D is the size of the ch dimension
+```
+
+The 3D formula is just a natural extension of the 2D positional encoding used
+in [this](https://arxiv.org/pdf/1908.11415.pdf) paper.
+
+Don't worry if the input is not divisible by 2 (1D), 4 (2D), or 6 (3D); all the
+necessary padding will be taken care of.
 
 ## Thank you
 
