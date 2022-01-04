@@ -71,8 +71,7 @@ print(p_enc_3d(z).shape) # (1, 11, 5, 6, 4)
 
 ### Tensorflow Keras
 
-This also supports Tensorflow (1D and 3D coming soon!). Simply prepend all
-class names with `TF`.
+This also supports Tensorflow. Simply prepend all class names with `TF`.
 
 ```python3
 import tensorflow as tf
