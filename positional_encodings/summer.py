@@ -1,6 +1,4 @@
-import numpy as np
 import tensorflow as tf
-import torch
 import torch.nn as nn
 
 
@@ -34,7 +32,8 @@ class TFSummer(tf.keras.layers.Layer):
         super(TFSummer, self).__init__()
         self.penc = penc
 
-    def forward(self, tensor):
+    @tf.function
+    def call(self, tensor):
         """
         :param tensor: A 3, 4 or 5d tensor that matches the model output size
         :return: Positional Encoding Matrix summed to the original tensor
