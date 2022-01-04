@@ -7,4 +7,8 @@ from positional_encodings.positional_encodings import (
     PositionalEncodingPermute3D,
 )
 from positional_encodings.summer import Summer, TFSummer
-from positional_encodings.tf_positional_encodings import TFPositionalEncoding2D
+from positional_encodings.tf_positional_encodings import (
+    TFPositionalEncoding1D,
+    TFPositionalEncoding2D,
+    TFPositionalEncoding3D,
+)

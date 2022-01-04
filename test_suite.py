@@ -38,7 +38,9 @@ def test_torch_3d_correct_shape():
 
 
 def test_tf_1d_correct_shape():
-    pass  # TODO
+    p_enc_1d = TFPositionalEncoding1D(170)
+    x = tf.zeros((1, 1024, 170))
+    assert p_enc_1d(x).shape == (1, 1024, 170)
 
 
 def test_tf_2d_correct_shape():
@@ -48,11 +50,22 @@ def test_tf_2d_correct_shape():
 
 
 def test_tf_3d_correct_shape():
-    pass  # TODO
+    p_enc_3d = TFPositionalEncoding3D(170)
+    z = tf.zeros((1, 4, 1, 1024, 170))
+    assert p_enc_3d(z).shape == (1, 4, 1, 1024, 170)
 
 
 def test_torch_tf_1d_same():
-    pass  # TODO
+    tf_enc_1d = TFPositionalEncoding1D(123)
+    pt_enc_1d = PositionalEncoding1D(123)
+
+    sample = np.random.randn(2, 123, 15)
+
+    tf_out = tf_enc_1d(sample)
+    pt_out = pt_enc_1d(torch.tensor(sample))
+
+    # There is some rounding discrepancy
+    assert np.sum(np.abs(tf_out.numpy() - pt_out.numpy()) > 0.0001) == 0
 
 
 def test_torch_tf_2d_same():
@@ -69,7 +82,16 @@ def test_torch_tf_2d_same():
 
 
 def test_torch_tf_3d_same():
-    pass  # TODO
+    tf_enc_3d = TFPositionalEncoding3D(123)
+    pt_enc_3d = PositionalEncoding3D(123)
+
+    sample = np.random.randn(2, 123, 24, 21, 10)
+
+    tf_out = tf_enc_3d(sample)
+    pt_out = pt_enc_3d(torch.tensor(sample))
+
+    # There is some rounding discrepancy
+    assert np.sum(np.abs(tf_out.numpy() - pt_out.numpy()) > 0.0001) == 0
 
 
 def test_torch_summer():
