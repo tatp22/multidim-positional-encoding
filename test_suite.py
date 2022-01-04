@@ -70,3 +70,23 @@ def test_torch_tf_2d_same():
 
 def test_torch_tf_3d_same():
     pass  # TODO
+
+
+def test_torch_summer():
+    model_with_sum = Summer(PositionalEncoding2D(125))
+    model_wo_sum = PositionalEncoding2D(125)
+    z = torch.rand(3, 5, 6, 125)
+    assert (
+        np.sum(np.abs((model_wo_sum(z) + z).numpy() - model_with_sum(z).numpy()))
+        < 0.0001
+    ), "The summer is not working properly!"
+
+
+def test_tf_summer():
+    model_with_sum = TFSummer(TFPositionalEncoding2D(125))
+    model_wo_sum = TFPositionalEncoding2D(125)
+    z = np.random.randn(3, 5, 6, 125)
+    assert (
+        np.sum(np.abs((model_wo_sum(z) + z).numpy() - model_with_sum(z).numpy()))
+        < 0.0001
+    ), "The tf summer is not working properly!"

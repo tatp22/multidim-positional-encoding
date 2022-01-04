@@ -1,22 +1,20 @@
 # 1D, 2D, and 3D Sinusoidal Postional Encoding (Pytorch and Tensorflow)
 
-![Master workflow](https://github.com/github/docs/actions/workflows/main.yml/badge.svg)
 ![Code Coverage](./svgs/cov.svg)
 [![PyPI version](https://badge.fury.io/py/positional-encodings.svg)](https://badge.fury.io/py/positional-encodings)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This is an implemenation of 1D, 2D, and 3D sinusodal positional encoding, being
-able to encode on tensors of the form `(batchsize, x, ch)`, `(batchsize, x, y,
-ch)`, and `(batchsize, x, y, z, ch)`, where the positional encodings will be
-added to the `ch` dimension. The [Attention is All You
+This is a practical, easy to download implemenation of 1D, 2D, and 3D
+sinusodial positional encodings for PyTorch and Tensorflow.
+
+It is able to encode on tensors of the form `(batchsize, x, ch)`, `(batchsize,
+x, y, ch)`, and `(batchsize, x, y, z, ch)`, where the positional encodings will
+be calculated along the `ch` dimension. The [Attention is All You
 Need](https://arxiv.org/pdf/1706.03762.pdf) allowed for positional encoding in
 only one dimension, however, this works to extend this to 2 and 3 dimensions.
 
-New: This also works on tensors of the form `(batchsize, ch, x)`, etc. For
-inputs of this type, include the word `Permute` before the number in the class;
-e.g. for a 1D input of size `(batchsize, ch, x)`, do
-`PositionalEncodingPermute1D` instead of `PositionalEncoding1D`.
+This also works on tensors of the form `(batchsize, ch, x)`, etc. See the usage for more information.
 
 To install, simply run:
 
@@ -24,7 +22,76 @@ To install, simply run:
 pip install positional-encodings
 ```
 
-Specifically, the formula for inserting the positional encoding will be as follows:
+## Usage (PyTorch):
+
+The repo comes with the three main positional encoding models,
+`PositionalEncoding{1,2,3}D`. In addition, there is a `Summer` class that adds
+the input tensor to the positional encodings. See the first example for more info.
+
+```python3
+import torch
+from positional_encodings import PositionalEncoding1D, PositionalEncoding2D, PositionalEncoding3D
+
+# Returns the position encoding only
+p_enc_1d_model = PositionalEncoding1D(10)
+
+# Return the inputs with the position encoding added
+p_enc_1d_model_sum = Summer(PositionalEncoding1D(10))
+
+x = torch.rand(1,6,10)
+penc_no_sum = p_enc_1d_model(x) # penc_no_sum.shape == (1, 6, 10)
+penc_sum = p_enc_1d_model_sum(x)
+print(penc_no_sum + x == penc_sum) # True
+```
+
+```python3
+p_enc_2d = PositionalEncoding2D(8)
+y = torch.zeros((1,6,2,8))
+print(p_enc_2d(y).shape) # (1, 6, 2, 8)
+
+p_enc_3d = PositionalEncoding3D(11)
+z = torch.zeros((1,5,6,4,11))
+print(p_enc_3d(z).shape) # (1, 5, 6, 4, 11)
+```
+
+And for tensors of the form `(batchsize, ch, x)` or their 2D and 3D
+counterparts, include the word `Permute` before the number in the class; e.g.
+for a 1D input of size `(batchsize, ch, x)`, do `PositionalEncodingPermute1D`
+instead of `PositionalEncoding1D`.
+
+
+```python3
+import torch
+from positional_encodings import PositionalEncodingPermute3D
+
+p_enc_3d = PositionalEncodingPermute3D(11)
+z = torch.zeros((1,11,5,6,4))
+print(p_enc_3d(z).shape) # (1, 11, 5, 6, 4)
+```
+
+### Tensorflow Keras
+
+This also supports Tensorflow (1D and 3D coming soon!). Simply prepend all
+class names with `TF`.
+
+```python3
+import tensorflow as tf
+from positional_encodings import TFPositionalEncoding2D
+
+# Returns the position encoding only
+p_enc_2d = TFPositionalEncoding2D(170)
+y = tf.zeros((1,8,6,2))
+print(p_enc_2d(y).shape) # (1, 8, 6, 2)
+
+# Return the inputs with the position encoding added
+add_p_enc_2d = TFSummer(TFPositionalEncoding2D(170))
+y = tf.ones((1,8,6,2))
+print(add_p_enc_2d(y) - p_enc_2d(y)) # tf.ones((1,8,6,2))
+```
+
+## Formulas
+
+The formula for inserting the positional encoding are as follows:
 
 1D:
 ```
@@ -62,64 +129,11 @@ Where:
 i,j,k is an integer in [0, D/6), where D is the size of the ch dimension
 ```
 
-This is just a natural extension of the 2D positional encoding used in [this](https://arxiv.org/pdf/1908.11415.pdf) paper.
+The 3D formula is just a natural extension of the 2D positional encoding used
+in [this](https://arxiv.org/pdf/1908.11415.pdf) paper.
 
-Don't worry if the input is not divisible by 2 (1D), 4 (2D), or 6 (3D); all the necessary padding will be taken care of.
-
-## Usage:
-
-```python3
-import torch
-from positional_encodings import PositionalEncoding1D, PositionalEncoding2D, PositionalEncoding3D
-
-p_enc_1d = PositionalEncoding1D(10)
-x = torch.zeros((1,6,10))
-print(p_enc_1d(x).shape) # (1, 6, 10)
-
-p_enc_2d = PositionalEncoding2D(8)
-y = torch.zeros((1,6,2,8))
-print(p_enc_2d(y).shape) # (1, 6, 2, 8)
-
-p_enc_3d = PositionalEncoding3D(11)
-z = torch.zeros((1,5,6,4,11))
-print(p_enc_3d(z).shape) # (1, 5, 6, 4, 11)
-```
-
-And for tensors of the form `(batchsize, ch, x)`, etc:
-
-```python3
-import torch
-from positional_encodings import PositionalEncodingPermute1D, PositionalEncodingPermute2D, PositionalEncodingPermute3D
-
-p_enc_1d = PositionalEncodingPermute1D(10)
-x = torch.zeros((1,10,6))
-print(p_enc_1d(x).shape) # (1, 10, 6)
-
-p_enc_2d = PositionalEncodingPermute2D(8)
-y = torch.zeros((1,8,6,2))
-print(p_enc_2d(y).shape) # (1, 8, 6, 2)
-
-p_enc_3d = PositionalEncodingPermute3D(11)
-z = torch.zeros((1,11,5,6,4))
-print(p_enc_3d(z).shape) # (1, 11, 5, 6, 4)
-```
-
-### Tensorflow Keras
-
-```python3
-import tensorflow as tf
-from positional_encodings import TFPositionalEncoding2D
-
-# Returns the position encoding only
-p_enc_2d = TFPositionalEncoding2D(170, return_format="pos")
-y = tf.zeros((1,8,6,2))
-print(p_enc_2d(y).shape) # (1, 8, 6, 2)
-
-# Return the inputs with the position encoding added
-add_p_enc_2d = TFPositionalEncoding2D(170, return_format="sum")
-y = tf.ones((1,8,6,2))
-print(add_p_enc_2d(y) - p_enc_2d(y)) # tf.ones((1,8,6,2))
-```
+Don't worry if the input is not divisible by 2 (1D), 4 (2D), or 6 (3D); all the
+necessary padding will be taken care of.
 
 ## Thank you
 
