@@ -14,7 +14,7 @@ class TFPositionalEncoding1D(tf.keras.layers.Layer):
         """
         super(TFPositionalEncoding1D, self).__init__()
 
-        self.channels = channels
+        self.channels = int(np.ceil(channels / 2) * 2)
         self.inv_freq = np.float32(
             1
             / np.power(
@@ -35,8 +35,8 @@ class TFPositionalEncoding1D(tf.keras.layers.Layer):
         dtype = self.inv_freq.dtype
         pos_x = tf.range(x, dtype=dtype)
         sin_inp_x = tf.einsum("i,j->ij", pos_x, self.inv_freq)
-        emb = tf.expand_dims(tf.concat((tf.sin(sin_inp_x), tf.cos(sin_inp_x)), -1), 1)
-        emb = emb[:, 0, :]  # a bit of a hack
+        emb = tf.expand_dims(tf.concat((tf.sin(sin_inp_x), tf.cos(sin_inp_x)), -1), 0)
+        emb = emb[0]  # A bit of a hack
         return tf.repeat(emb[None, :, :org_channels], tf.shape(inputs)[0], axis=0)
 
 

@@ -59,7 +59,7 @@ def test_torch_tf_1d_same():
     tf_enc_1d = TFPositionalEncoding1D(123)
     pt_enc_1d = PositionalEncoding1D(123)
 
-    sample = np.random.randn(2, 123, 15)
+    sample = np.random.randn(2, 15, 123)
 
     tf_out = tf_enc_1d(sample)
     pt_out = pt_enc_1d(torch.tensor(sample))
