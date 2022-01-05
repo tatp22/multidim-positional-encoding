@@ -13,17 +13,12 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/tatp22/multidim-positional-encoding",
     packages=setuptools.find_packages(),
-    keywords=['transformers', 'attention'],
+    keywords=["transformers", "attention"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
-    install_requires=[
-        'torch',
-        'tensorflow',
-        'numpy',
-    ],
-
+    python_requires=">=3.6",
+    install_requires=["torch", "tensorflow", "numpy"],
 )
