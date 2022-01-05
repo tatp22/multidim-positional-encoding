@@ -3,5 +3,4 @@ build/
 positional_encodings.egg-info/
 dist/
 
-setup.py
 .coverage
