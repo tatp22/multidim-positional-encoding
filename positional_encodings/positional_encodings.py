@@ -9,6 +9,7 @@ class PositionalEncoding1D(nn.Module):
         :param channels: The last dimension of the tensor you want to apply pos emb to.
         """
         super(PositionalEncoding1D, self).__init__()
+        channels = int(np.ceil(channels / 2) * 2)
         self.channels = channels
         inv_freq = 1.0 / (10000 ** (torch.arange(0, channels, 2).float() / channels))
         self.register_buffer("inv_freq", inv_freq)
