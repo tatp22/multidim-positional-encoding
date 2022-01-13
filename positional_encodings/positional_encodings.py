@@ -45,16 +45,16 @@ class PositionalEncodingPermute1D(nn.Module):
         return enc.permute(0, 2, 1)
 
 
-class PositionalEncoding2D(nn.Module):
+class SinglePositionalEncoding2D(nn.Module):
     def __init__(self, channels):
         """
         :param channels: The last dimension of the tensor you want to apply pos emb to.
         """
-        super(PositionalEncoding2D, self).__init__()
-        channels = int(np.ceil(channels / 4) * 2)
+        super(SinglePositionalEncoding2D, self).__init__()
+        channels = int(np.ceil(channels/4)*2)
         self.channels = channels
-        inv_freq = 1.0 / (10000 ** (torch.arange(0, channels, 2).float() / channels))
-        self.register_buffer("inv_freq", inv_freq)
+        inv_freq = 1. / (10000 ** (torch.arange(0, channels, 2).float() / channels))
+        self.register_buffer('inv_freq', inv_freq)
 
     def forward(self, tensor):
         """
@@ -70,13 +70,44 @@ class PositionalEncoding2D(nn.Module):
         sin_inp_y = torch.einsum("i,j->ij", pos_y, self.inv_freq)
         emb_x = torch.cat((sin_inp_x.sin(), sin_inp_x.cos()), dim=-1).unsqueeze(1)
         emb_y = torch.cat((sin_inp_y.sin(), sin_inp_y.cos()), dim=-1)
-        emb = torch.zeros((x, y, self.channels * 2), device=tensor.device).type(
-            tensor.type()
-        )
-        emb[:, :, : self.channels] = emb_x
-        emb[:, :, self.channels : 2 * self.channels] = emb_y
+        emb = torch.zeros((x,y,self.channels*2),device=tensor.device).type(tensor.type())
+        emb[:,:,:self.channels] = emb_x
+        emb[:,:,self.channels:2*self.channels] = emb_y
 
-        return emb[None, :, :, :orig_ch].repeat(batch_size, 1, 1, 1)
+        return emb[None,:,:,:orig_ch]
+
+class FixedPositionalEncoding2D(nn.Module):
+    def __init__(self, shape, channels):
+        super(FixedPositionalEncoding2D, self).__init__()
+        self.pos_encoder = SinglePositionalEncoding2D(channels)
+        self.pos_encoding = self.pos_encoder(torch.ones(1, shape[0], shape[1], channels))
+        self.device = self.pos_encoding.device
+        self.repeated_pos_encoding = self.pos_encoding.repeat(32, 1, 1, 1)
+
+    def forward(self, tensor):
+        # Ensure encoding on same device
+        if self.device is not tensor.device:
+            self.pos_encoding = self.pos_encoding.to(tensor.device)
+            self.device = self.pos_encoding.device
+        # Match batch size
+        if self.repeated_pos_encoding.shape[0] != tensor.shape[0]:
+            self.repeated_pos_encoding = self.pos_encoding.repeat(tensor.shape[0], 1, 1, 1)
+        return self.repeated_pos_encoding
+
+class PositionalEncoding2D(nn.Module):
+    def __init__(self, channels):
+        """
+        :param channels: The last dimension of the tensor you want to apply pos emb to.
+        """
+        super(PositionalEncoding2D, self).__init__()
+        self.pos_encoder = SinglePositionalEncoding2D(channels)
+
+    def forward(self, tensor):
+        """
+        :param tensor: A 4d tensor of size (batch_size, x, y, ch)
+        :return: Positional Encoding Matrix of size (batch_size, x, y, ch)
+        """
+        return self.pos_encoder(tensor).repeat(tensor.shape[0], 1, 1, 1)
 
 
 class PositionalEncodingPermute2D(nn.Module):

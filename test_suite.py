@@ -1,11 +1,11 @@
 import numpy as np
 import tensorflow as tf
 import torch
+import time
 
 from positional_encodings import *
 
 tf.config.experimental_run_functions_eagerly(True)
-
 
 def test_torch_1d_correct_shape():
     p_enc_1d = PositionalEncoding1D(10)
@@ -103,6 +103,23 @@ def test_torch_summer():
         < 0.0001
     ), "The summer is not working properly!"
 
+def test_torch_2D_fixed_speedup(sample_size=10_000):
+    device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+    data = torch.randn(32,8,8,64).to(device)
+
+    # Fixed 
+    pos_enc = FixedPositionalEncoding2D((8,32), 64).to(device)
+    start_time = time.time()
+    for i in range(sample_size):
+        pos_enc(data)
+    print(f"Duration for fixied: {time.time()- start_time}")
+
+    # Original
+    pos_enc = PositionalEncoding2D(64).to(device)
+    start_time = time.time()
+    for i in range(sample_size):
+        pos_enc(data)
+    print(f"Duration for original: {time.time()- start_time}")
 
 def test_tf_summer():
     model_with_sum = TFSummer(TFPositionalEncoding2D(125))
