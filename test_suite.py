@@ -112,14 +112,14 @@ def test_torch_2D_fixed_speedup(sample_size=10_000):
     start_time = time.time()
     for i in range(sample_size):
         pos_enc(data)
-    print(f"Duration for fixied: {time.time()- start_time}")
+    print(f"Duration when fixed: {time.time()- start_time}")
 
     # Original
     pos_enc = PositionalEncoding2D(64).to(device)
     start_time = time.time()
     for i in range(sample_size):
         pos_enc(data)
-    print(f"Duration for original: {time.time()- start_time}")
+    print(f"Duration of original: {time.time()- start_time}")
 
 def test_tf_summer():
     model_with_sum = TFSummer(TFPositionalEncoding2D(125))
