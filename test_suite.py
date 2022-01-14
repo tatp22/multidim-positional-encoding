@@ -107,7 +107,7 @@ def test_torch_summer():
 def test_torch_fixed_1D_encoding():
     embeding_dim = 64
     shape = (13, )
-    batch_sizes = (9, 10, 13, embeding_dim)
+    batch_sizes = (9, 10, 13, 16)
 
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
@@ -125,11 +125,9 @@ def test_torch_fixed_1D_encoding():
 
         assert torch.sum(out_original - out_fixed) == 0, "The output of the 1D Positional encoder and the fixed wrapper are not the same. At batch size {batch_size}"
 
-test_torch_fixed_1D_encoding()
-
 def test_torch_fixed_2D_encoding():
     embeding_dim = 64
-    batch_sizes = (9, 10, 13, embeding_dim)
+    batch_sizes = (9, 10, 13, 16)
     shape = (13, 13)
 
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
@@ -146,10 +144,9 @@ def test_torch_fixed_2D_encoding():
 
         assert torch.sum(out_original - out_fixed) == 0, f"The output of the 2D Positional encoder and the fixed wrapper are not the same. At batch size {batch_size}"
 
-
 def test_torch_fixed_3D_encoding():
     embeding_dim = 64
-    batch_sizes = (9, 10, 13, embeding_dim)
+    batch_sizes = (9, 10, 13, 16)
     shape = (13, 13, 13)
 
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
@@ -166,20 +163,6 @@ def test_torch_fixed_3D_encoding():
         print(out_fixed.shape)
         print(out_original.shape)
         assert torch.sum(out_original - out_fixed) == 0, f"The output of the 2D Positional encoder and the fixed wrapper are not the same. At batch size {batch_size}"
-
-    # Fixed 
-    # pos_enc = FixedPositionalEncoding2D((8,32), 64).to(device)
-    # start_time = time.time()
-    # for i in range(sample_size):
-    #     pos_enc(data)
-    # print(f"Duration when fixed: {time.time()- start_time}")
-
-    # # Original
-    # pos_enc = PositionalEncoding2D(64).to(device)
-    # start_time = time.time()
-    # for i in range(sample_size):
-    #     pos_enc(data)
-    # print(f"Duration of original: {time.time()- start_time}")
 
 def test_tf_summer():
     model_with_sum = TFSummer(TFPositionalEncoding2D(125))

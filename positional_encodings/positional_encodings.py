@@ -45,6 +45,10 @@ class PositionalEncodingPermute1D(nn.Module):
         enc = self.penc(tensor)
         return enc.permute(0, 2, 1)
 
+    @property
+    def org_channels(self):
+        return self.penc.org_channels
+
 
 class PositionalEncoding2D(nn.Module):
     def __init__(self, channels):
@@ -92,6 +96,10 @@ class PositionalEncodingPermute2D(nn.Module):
         tensor = tensor.permute(0, 2, 3, 1)
         enc = self.penc(tensor)
         return enc.permute(0, 3, 1, 2)
+
+    @property
+    def org_channels(self):
+        return self.penc.org_channels
 
 
 class PositionalEncoding3D(nn.Module):
@@ -152,8 +160,21 @@ class PositionalEncodingPermute3D(nn.Module):
         enc = self.penc(tensor)
         return enc.permute(0, 4, 1, 2, 3)
 
+    @property
+    def org_channels(self):
+        return self.penc.org_channels
+
 
 class FixEncoding(nn.Module):
+    """
+        :param pos_encoder: instance of PositionalEncoding1D, PositionalEncoding2D or PositionalEncoding3D
+        :param shape: shape of input, excluding batch and embedding size
+
+        Example:
+        p_enc_2d = FixEncoding(PositionalEncoding2D(32), (x, y)) # for where x and y are the dimensions of your image
+        inputs = torch.randn(64, 128, 128, 32) # where x and y are 128, and 64 is the batch size
+        p_enc_2d(inputs)
+    """
 
     def __init__(self, pos_encoder, shape):
         super(FixEncoding, self).__init__()
