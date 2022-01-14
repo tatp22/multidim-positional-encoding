@@ -9,6 +9,7 @@ class PositionalEncoding1D(nn.Module):
         :param channels: The last dimension of the tensor you want to apply pos emb to.
         """
         super(PositionalEncoding1D, self).__init__()
+        self.org_channels = channels
         channels = int(np.ceil(channels / 2) * 2)
         self.channels = channels
         inv_freq = 1.0 / (10000 ** (torch.arange(0, channels, 2).float() / channels))
@@ -45,12 +46,13 @@ class PositionalEncodingPermute1D(nn.Module):
         return enc.permute(0, 2, 1)
 
 
-class SinglePositionalEncoding2D(nn.Module):
+class PositionalEncoding2D(nn.Module):
     def __init__(self, channels):
         """
         :param channels: The last dimension of the tensor you want to apply pos emb to.
         """
-        super(SinglePositionalEncoding2D, self).__init__()
+        super(PositionalEncoding2D, self).__init__()
+        self.org_channels = channels
         channels = int(np.ceil(channels / 4) * 2)
         self.channels = channels
         inv_freq = 1.0 / (10000 ** (torch.arange(0, channels, 2).float() / channels))
@@ -76,41 +78,7 @@ class SinglePositionalEncoding2D(nn.Module):
         emb[:, :, : self.channels] = emb_x
         emb[:, :, self.channels : 2 * self.channels] = emb_y
 
-        return emb[None, :, :, :orig_ch]
-
-class FixedPositionalEncoding2D(nn.Module):
-    def __init__(self, shape, channels):
-        super(FixedPositionalEncoding2D, self).__init__()
-        self.pos_encoder = SinglePositionalEncoding2D(channels)
-        self.pos_encoding = self.pos_encoder(torch.ones(1, shape[0], shape[1], channels))
-        self.device = self.pos_encoding.device
-        self.repeated_pos_encoding = self.pos_encoding.repeat(32, 1, 1, 1)
-
-    def forward(self, tensor):
-        # Ensure encoding on same device
-        if self.device is not tensor.device:
-            self.pos_encoding = self.pos_encoding.to(tensor.device)
-            self.device = self.pos_encoding.device
-        # Match batch size
-        if self.repeated_pos_encoding.shape[0] != tensor.shape[0]:
-            self.repeated_pos_encoding = self.pos_encoding.repeat(tensor.shape[0], 1, 1, 1)
-        return self.repeated_pos_encoding
-
-class PositionalEncoding2D(nn.Module):
-    def __init__(self, channels):
-        """
-        :param channels: The last dimension of the tensor you want to apply pos emb to.
-        """
-        super(PositionalEncoding2D, self).__init__()
-        self.pos_encoder = SinglePositionalEncoding2D(channels)
-
-    def forward(self, tensor):
-        """
-        :param tensor: A 4d tensor of size (batch_size, x, y, ch)
-        :return: Positional Encoding Matrix of size (batch_size, x, y, ch)
-        """
-        return self.pos_encoder(tensor).repeat(tensor.shape[0], 1, 1, 1)
-
+        return emb[None, :, :, :orig_ch].repeat(tensor.shape[0], 1, 1, 1)
 
 class PositionalEncodingPermute2D(nn.Module):
     def __init__(self, channels):
@@ -132,6 +100,7 @@ class PositionalEncoding3D(nn.Module):
         :param channels: The last dimension of the tensor you want to apply pos emb to.
         """
         super(PositionalEncoding3D, self).__init__()
+        self.org_channels = channels
         channels = int(np.ceil(channels / 6) * 2)
         if channels % 2:
             channels += 1
@@ -182,3 +151,20 @@ class PositionalEncodingPermute3D(nn.Module):
         tensor = tensor.permute(0, 2, 3, 4, 1)
         enc = self.penc(tensor)
         return enc.permute(0, 4, 1, 2, 3)
+
+
+class FixEncoding(nn.Module):
+
+    def __init__(self, pos_encoder, shape):
+        super(FixEncoding, self).__init__()
+        self.shape = shape
+        self.dim = len(shape)
+        self.pos_encoder = pos_encoder
+        self.pos_encoding = pos_encoder(torch.ones(1, *shape, self.pos_encoder.org_channels))
+        self.batch_size = 0
+
+    def forward(self, tensor):
+        if self.batch_size != tensor.shape[0]:
+            self.repeated_pos_encoding = self.pos_encoding.to(tensor.device).repeat(tensor.shape[0], *(self.dim+1)*[1])
+            self.batch_size = tensor.shape[0]
+        return self.repeated_pos_encoding
