@@ -84,6 +84,7 @@ class PositionalEncoding2D(nn.Module):
 
         return emb[None, :, :, :orig_ch].repeat(tensor.shape[0], 1, 1, 1)
 
+
 class PositionalEncodingPermute2D(nn.Module):
     def __init__(self, channels):
         """
@@ -167,13 +168,13 @@ class PositionalEncodingPermute3D(nn.Module):
 
 class FixEncoding(nn.Module):
     """
-        :param pos_encoder: instance of PositionalEncoding1D, PositionalEncoding2D or PositionalEncoding3D
-        :param shape: shape of input, excluding batch and embedding size
+    :param pos_encoder: instance of PositionalEncoding1D, PositionalEncoding2D or PositionalEncoding3D
+    :param shape: shape of input, excluding batch and embedding size
 
-        Example:
-        p_enc_2d = FixEncoding(PositionalEncoding2D(32), (x, y)) # for where x and y are the dimensions of your image
-        inputs = torch.randn(64, 128, 128, 32) # where x and y are 128, and 64 is the batch size
-        p_enc_2d(inputs)
+    Example:
+    p_enc_2d = FixEncoding(PositionalEncoding2D(32), (x, y)) # for where x and y are the dimensions of your image
+    inputs = torch.randn(64, 128, 128, 32) # where x and y are 128, and 64 is the batch size
+    p_enc_2d(inputs)
     """
 
     def __init__(self, pos_encoder, shape):
@@ -181,11 +182,15 @@ class FixEncoding(nn.Module):
         self.shape = shape
         self.dim = len(shape)
         self.pos_encoder = pos_encoder
-        self.pos_encoding = pos_encoder(torch.ones(1, *shape, self.pos_encoder.org_channels))
+        self.pos_encoding = pos_encoder(
+            torch.ones(1, *shape, self.pos_encoder.org_channels)
+        )
         self.batch_size = 0
 
     def forward(self, tensor):
         if self.batch_size != tensor.shape[0]:
-            self.repeated_pos_encoding = self.pos_encoding.to(tensor.device).repeat(tensor.shape[0], *(self.dim+1)*[1])
+            self.repeated_pos_encoding = self.pos_encoding.to(tensor.device).repeat(
+                tensor.shape[0], *(self.dim + 1) * [1]
+            )
             self.batch_size = tensor.shape[0]
         return self.repeated_pos_encoding
