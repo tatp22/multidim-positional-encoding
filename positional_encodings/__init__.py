@@ -5,6 +5,7 @@ from positional_encodings.positional_encodings import (
     PositionalEncodingPermute1D,
     PositionalEncodingPermute2D,
     PositionalEncodingPermute3D,
+    FixEncoding,
 )
 from positional_encodings.summer import Summer, TFSummer
 from positional_encodings.tf_positional_encodings import (

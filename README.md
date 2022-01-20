@@ -25,8 +25,9 @@ pip install positional-encodings
 ## Usage (PyTorch):
 
 The repo comes with the three main positional encoding models,
-`PositionalEncoding{1,2,3}D`. In addition, there is a `Summer` class that adds
-the input tensor to the positional encodings. See the first example for more info.
+`PositionalEncoding{1,2,3}D`. In addition, there are a `Summer` class that adds
+the input tensor to the positional encodings a and `FixEncoding` class for when 
+dealing with a fixed input shape. that greatly decreases the run time. See the first example for more info.
 
 ```python3
 import torch
@@ -38,9 +39,13 @@ p_enc_1d_model = PositionalEncoding1D(10)
 # Return the inputs with the position encoding added
 p_enc_1d_model_sum = Summer(PositionalEncoding1D(10))
 
+# Returns the same as p_enc_1d_model but much faster
+p_enc_1d_model_fixed = FixEncoding(PositionalEncoding1D(10), (6, ))
+
 x = torch.rand(1,6,10)
 penc_no_sum = p_enc_1d_model(x) # penc_no_sum.shape == (1, 6, 10)
 penc_sum = p_enc_1d_model_sum(x)
+penc_fixed = p_enc_1d_model_fixed(x) # This ran 100x faster
 print(penc_no_sum + x == penc_sum) # True
 ```
 
