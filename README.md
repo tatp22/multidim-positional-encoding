@@ -26,8 +26,9 @@ pip install positional-encodings
 
 The repo comes with the three main positional encoding models,
 `PositionalEncoding{1,2,3}D`. In addition, there are a `Summer` class that adds
-the input tensor to the positional encodings a and `FixEncoding` class for when 
-dealing with a fixed input shape. that greatly decreases the run time. See the first example for more info.
+the input tensor to the positional encodings a and `FixEncoding` class that
+saves computation by not necessarily computing the tensor every forward pass.
+See the `FixEncoding` section for more info.
 
 ```python3
 import torch
@@ -39,13 +40,13 @@ p_enc_1d_model = PositionalEncoding1D(10)
 # Return the inputs with the position encoding added
 p_enc_1d_model_sum = Summer(PositionalEncoding1D(10))
 
-# Returns the same as p_enc_1d_model but much faster
+# Returns the same as p_enc_1d_model but saves it for later
 p_enc_1d_model_fixed = FixEncoding(PositionalEncoding1D(10), (6, ))
 
 x = torch.rand(1,6,10)
 penc_no_sum = p_enc_1d_model(x) # penc_no_sum.shape == (1, 6, 10)
 penc_sum = p_enc_1d_model_sum(x)
-penc_fixed = p_enc_1d_model_fixed(x) # This ran 100x faster
+penc_fixed = p_enc_1d_model_fixed(x) # The encoding is saved for later, making subsequent forward passes faster.
 print(penc_no_sum + x == penc_sum) # True
 ```
 
@@ -92,6 +93,20 @@ add_p_enc_2d = TFSummer(TFPositionalEncoding2D(170))
 y = tf.ones((1,8,6,2))
 print(add_p_enc_2d(y) - p_enc_2d(y)) # tf.ones((1,8,6,2))
 ```
+
+## More notes on `FixEncoding`
+
+TLDR: Use this class to speed up model training in almost all cases.
+
+The fix encoding class works as follows: on the first forward pass,
+the positional encoding tensor gets cached in the memory of the class
+`(batch_size, *shape)`. Then, on subsequent forward passes, if
+the input tensor matches the shape of the previously inputted tensor,
+it will use the cached version. This avoids having to make the
+tensor on each forward pass.
+
+TBD: Make this the default behavior, and have it always cache the
+intermediate result.
 
 ## Formulas
 
