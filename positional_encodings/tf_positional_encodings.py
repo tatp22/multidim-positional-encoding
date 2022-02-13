@@ -21,6 +21,7 @@ class TFPositionalEncoding1D(tf.keras.layers.Layer):
                 10000, np.arange(0, self.channels, 2) / np.float32(self.channels)
             )
         )
+        self.cached_penc = None
 
     @tf.function
     def call(self, inputs):
@@ -30,6 +31,11 @@ class TFPositionalEncoding1D(tf.keras.layers.Layer):
         """
         if len(inputs.shape) != 3:
             raise RuntimeError("The input tensor has to be 3d!")
+
+        if self.cached_penc is not None and self.cached_penc.shape == inputs.shape:
+            return self.cached_penc
+
+        self.cached_penc = None
         _, x, org_channels = inputs.shape
 
         dtype = self.inv_freq.dtype
@@ -37,7 +43,11 @@ class TFPositionalEncoding1D(tf.keras.layers.Layer):
         sin_inp_x = tf.einsum("i,j->ij", pos_x, self.inv_freq)
         emb = tf.expand_dims(tf.concat((tf.sin(sin_inp_x), tf.cos(sin_inp_x)), -1), 0)
         emb = emb[0]  # A bit of a hack
-        return tf.repeat(emb[None, :, :org_channels], tf.shape(inputs)[0], axis=0)
+        self.cached_penc = tf.repeat(
+            emb[None, :, :org_channels], tf.shape(inputs)[0], axis=0
+        )
+
+        return self.cached_penc
 
 
 class TFPositionalEncoding2D(tf.keras.layers.Layer):
@@ -59,6 +69,7 @@ class TFPositionalEncoding2D(tf.keras.layers.Layer):
                 10000, np.arange(0, self.channels, 2) / np.float32(self.channels)
             )
         )
+        self.cached_penc = None
 
     @tf.function
     def call(self, inputs):
@@ -68,6 +79,11 @@ class TFPositionalEncoding2D(tf.keras.layers.Layer):
         """
         if len(inputs.shape) != 4:
             raise RuntimeError("The input tensor has to be 4d!")
+
+        if self.cached_penc is not None and self.cached_penc.shape == inputs.shape:
+            return self.cached_penc
+
+        self.cached_penc = None
         _, x, y, org_channels = inputs.shape
 
         dtype = self.inv_freq.dtype
@@ -83,7 +99,10 @@ class TFPositionalEncoding2D(tf.keras.layers.Layer):
         emb_x = tf.tile(emb_x, (1, y, 1))
         emb_y = tf.tile(emb_y, (x, 1, 1))
         emb = tf.concat((emb_x, emb_y), -1)
-        return tf.repeat(emb[None, :, :, :org_channels], tf.shape(inputs)[0], axis=0)
+        self.cached_penc = tf.repeat(
+            emb[None, :, :, :org_channels], tf.shape(inputs)[0], axis=0
+        )
+        return self.cached_penc
 
 
 class TFPositionalEncoding3D(tf.keras.layers.Layer):
@@ -108,6 +127,7 @@ class TFPositionalEncoding3D(tf.keras.layers.Layer):
                 10000, np.arange(0, self.channels, 2) / np.float32(self.channels)
             )
         )
+        self.cached_penc = None
 
     @tf.function
     def call(self, inputs):
@@ -117,6 +137,11 @@ class TFPositionalEncoding3D(tf.keras.layers.Layer):
         """
         if len(inputs.shape) != 5:
             raise RuntimeError("The input tensor has to be 5d!")
+
+        if self.cached_penc is not None and self.cached_penc.shape == inputs.shape:
+            return self.cached_penc
+
+        self.cached_penc = None
         _, x, y, z, org_channels = inputs.shape
 
         dtype = self.inv_freq.dtype
@@ -144,4 +169,7 @@ class TFPositionalEncoding3D(tf.keras.layers.Layer):
         emb_z = tf.tile(emb_z, (x, y, 1, 1))
 
         emb = tf.concat((emb_x, emb_y, emb_z), -1)
-        return tf.repeat(emb[None, :, :, :, :org_channels], tf.shape(inputs)[0], axis=0)
+        self.cached_penc = tf.repeat(
+            emb[None, :, :, :, :org_channels], tf.shape(inputs)[0], axis=0
+        )
+        return self.cached_penc
