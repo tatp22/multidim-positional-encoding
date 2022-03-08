@@ -14,6 +14,7 @@ class PositionalEncoding1D(nn.Module):
         self.channels = channels
         inv_freq = 1.0 / (10000 ** (torch.arange(0, channels, 2).float() / channels))
         self.register_buffer("inv_freq", inv_freq)
+        self.cached_penc = None
 
     def forward(self, tensor):
         """
@@ -22,6 +23,11 @@ class PositionalEncoding1D(nn.Module):
         """
         if len(tensor.shape) != 3:
             raise RuntimeError("The input tensor has to be 3d!")
+
+        if self.cached_penc is not None and self.cached_penc.shape == tensor.shape:
+            return self.cached_penc
+
+        self.cached_penc = None
         batch_size, x, orig_ch = tensor.shape
         pos_x = torch.arange(x, device=tensor.device).type(self.inv_freq.type())
         sin_inp_x = torch.einsum("i,j->ij", pos_x, self.inv_freq)
@@ -29,7 +35,8 @@ class PositionalEncoding1D(nn.Module):
         emb = torch.zeros((x, self.channels), device=tensor.device).type(tensor.type())
         emb[:, : self.channels] = emb_x
 
-        return emb[None, :, :orig_ch].repeat(batch_size, 1, 1)
+        self.cached_penc = emb[None, :, :orig_ch].repeat(batch_size, 1, 1)
+        return self.cached_penc
 
 
 class PositionalEncodingPermute1D(nn.Module):
@@ -61,6 +68,7 @@ class PositionalEncoding2D(nn.Module):
         self.channels = channels
         inv_freq = 1.0 / (10000 ** (torch.arange(0, channels, 2).float() / channels))
         self.register_buffer("inv_freq", inv_freq)
+        self.cached_penc = None
 
     def forward(self, tensor):
         """
@@ -69,6 +77,11 @@ class PositionalEncoding2D(nn.Module):
         """
         if len(tensor.shape) != 4:
             raise RuntimeError("The input tensor has to be 4d!")
+
+        if self.cached_penc is not None and self.cached_penc.shape == tensor.shape:
+            return self.cached_penc
+
+        self.cached_penc = None
         batch_size, x, y, orig_ch = tensor.shape
         pos_x = torch.arange(x, device=tensor.device).type(self.inv_freq.type())
         pos_y = torch.arange(y, device=tensor.device).type(self.inv_freq.type())
@@ -82,7 +95,8 @@ class PositionalEncoding2D(nn.Module):
         emb[:, :, : self.channels] = emb_x
         emb[:, :, self.channels : 2 * self.channels] = emb_y
 
-        return emb[None, :, :, :orig_ch].repeat(tensor.shape[0], 1, 1, 1)
+        self.cached_penc = emb[None, :, :, :orig_ch].repeat(tensor.shape[0], 1, 1, 1)
+        return self.cached_penc
 
 
 class PositionalEncodingPermute2D(nn.Module):
@@ -116,6 +130,7 @@ class PositionalEncoding3D(nn.Module):
         self.channels = channels
         inv_freq = 1.0 / (10000 ** (torch.arange(0, channels, 2).float() / channels))
         self.register_buffer("inv_freq", inv_freq)
+        self.cached_penc = None
 
     def forward(self, tensor):
         """
@@ -124,6 +139,11 @@ class PositionalEncoding3D(nn.Module):
         """
         if len(tensor.shape) != 5:
             raise RuntimeError("The input tensor has to be 5d!")
+
+        if self.cached_penc is not None and self.cached_penc.shape == tensor.shape:
+            return self.cached_penc
+
+        self.cached_penc = None
         batch_size, x, y, z, orig_ch = tensor.shape
         pos_x = torch.arange(x, device=tensor.device).type(self.inv_freq.type())
         pos_y = torch.arange(y, device=tensor.device).type(self.inv_freq.type())
@@ -145,7 +165,8 @@ class PositionalEncoding3D(nn.Module):
         emb[:, :, :, self.channels : 2 * self.channels] = emb_y
         emb[:, :, :, 2 * self.channels :] = emb_z
 
-        return emb[None, :, :, :, :orig_ch].repeat(batch_size, 1, 1, 1, 1)
+        self.cached_penc = emb[None, :, :, :, :orig_ch].repeat(batch_size, 1, 1, 1, 1)
+        return self.cached_penc
 
 
 class PositionalEncodingPermute3D(nn.Module):
@@ -164,33 +185,3 @@ class PositionalEncodingPermute3D(nn.Module):
     @property
     def org_channels(self):
         return self.penc.org_channels
-
-
-class FixEncoding(nn.Module):
-    """
-    :param pos_encoder: instance of PositionalEncoding1D, PositionalEncoding2D or PositionalEncoding3D
-    :param shape: shape of input, excluding batch and embedding size
-
-    Example:
-    p_enc_2d = FixEncoding(PositionalEncoding2D(32), (x, y)) # for where x and y are the dimensions of your image
-    inputs = torch.randn(64, 128, 128, 32) # where x and y are 128, and 64 is the batch size
-    p_enc_2d(inputs)
-    """
-
-    def __init__(self, pos_encoder, shape):
-        super(FixEncoding, self).__init__()
-        self.shape = shape
-        self.dim = len(shape)
-        self.pos_encoder = pos_encoder
-        self.pos_encoding = pos_encoder(
-            torch.ones(1, *shape, self.pos_encoder.org_channels)
-        )
-        self.batch_size = 0
-
-    def forward(self, tensor):
-        if self.batch_size != tensor.shape[0]:
-            self.repeated_pos_encoding = self.pos_encoding.to(tensor.device).repeat(
-                tensor.shape[0], *(self.dim + 1) * [1]
-            )
-            self.batch_size = tensor.shape[0]
-        return self.repeated_pos_encoding

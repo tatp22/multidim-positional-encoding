@@ -106,73 +106,30 @@ def test_torch_summer():
     ), "The summer is not working properly!"
 
 
-def test_torch_fixed_1D_encoding():
-    embeding_dim = 64
-    shape = (13,)
-    batch_sizes = (9, 10, 13, 16)
+def test_torch_1D_cache():
+    p_enc_1d = PositionalEncoding1D(10)
+    x = torch.zeros((1, 6, 10))
+    y = torch.zeros((1, 7, 10))
 
-    device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+    assert not p_enc_1d.cached_penc
+    assert p_enc_1d(x).shape == (1, 6, 10)
+    assert p_enc_1d.cached_penc.shape == (1, 6, 10)
 
-    enc = PositionalEncoding1D(embeding_dim)
-    enc.to(device)
-    fixed_enc = FixEncoding(enc, shape)
-    fixed_enc.to(device)
-
-    for batch_size in batch_sizes:
-
-        data = torch.randn(batch_size, *shape, embeding_dim).to(device)
-
-        out_fixed = fixed_enc(data)
-        out_original = enc(data)
-
-        assert (
-            torch.sum(out_original - out_fixed) == 0
-        ), "The output of the 1D Positional encoder and the fixed wrapper are not the same. At batch size {batch_size}"
+    assert p_enc_1d(y).shape == (1, 7, 10)
+    assert p_enc_1d.cached_penc.shape == (1, 7, 10)
 
 
-def test_torch_fixed_2D_encoding():
-    embeding_dim = 64
-    batch_sizes = (9, 10, 13, 16)
-    shape = (13, 13)
+def test_tf_1D_cache():
+    p_enc_1d = TFPositionalEncoding1D(170)
+    x = tf.zeros((1, 1024, 170))
+    y = tf.zeros((1, 100, 170))
 
-    device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+    assert not p_enc_1d.cached_penc
+    assert p_enc_1d(x).shape == (1, 1024, 170)
+    assert p_enc_1d.cached_penc.shape == (1, 1024, 170)
 
-    enc = PositionalEncoding2D(embeding_dim)
-    enc.to(device)
-    fixed_enc = FixEncoding(enc, shape)
-    fixed_enc.to(device)
-
-    for batch_size in batch_sizes:
-        data = torch.randn(batch_size, *shape, embeding_dim).to(device)
-        out_fixed = fixed_enc(data)
-        out_original = enc(data)
-
-        assert (
-            torch.sum(out_original - out_fixed) == 0
-        ), f"The output of the 2D Positional encoder and the fixed wrapper are not the same. At batch size {batch_size}"
-
-
-def test_torch_fixed_3D_encoding():
-    embeding_dim = 64
-    batch_sizes = (9, 10, 13, 16)
-    shape = (13, 13, 13)
-
-    device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-
-    enc = PositionalEncoding3D(embeding_dim)
-    enc.to(device)
-    fixed_enc = FixEncoding(enc, shape)
-    fixed_enc.to(device)
-
-    for batch_size in batch_sizes:
-        data = torch.randn(batch_size, *shape, embeding_dim).to(device)
-        out_fixed = fixed_enc(data)
-        out_original = enc(data)
-        print(out_fixed.shape)
-        print(out_original.shape)
-        assert (
-            torch.sum(out_original - out_fixed) == 0
-        ), f"The output of the 2D Positional encoder and the fixed wrapper are not the same. At batch size {batch_size}"
+    assert p_enc_1d(y).shape == (1, 100, 170)
+    assert p_enc_1d.cached_penc.shape == (1, 100, 170)
 
 
 def test_tf_summer():
