@@ -7,7 +7,7 @@ def get_emb(sin_inp):
     """
     Gets a base embedding for one dimension with sin and cos intertwined
     """
-    emb = torch.cat((sin_inp.sin(), sin_inp.cos()), dim=-1)
+    emb = torch.stack((sin_inp.sin(), sin_inp.cos()), dim=-1)
     return torch.flatten(emb, -2, -1)
 
 
