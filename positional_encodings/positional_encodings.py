@@ -3,6 +3,14 @@ import torch
 import torch.nn as nn
 
 
+def get_emb(sin_inp):
+    """
+    Gets a base embedding for one dimension with sin and cos intertwined
+    """
+    emb = torch.stack((sin_inp.sin(), sin_inp.cos()), dim=-1)
+    return torch.flatten(emb, -2, -1)
+
+
 class PositionalEncoding1D(nn.Module):
     def __init__(self, channels):
         """
@@ -31,7 +39,7 @@ class PositionalEncoding1D(nn.Module):
         batch_size, x, orig_ch = tensor.shape
         pos_x = torch.arange(x, device=tensor.device).type(self.inv_freq.type())
         sin_inp_x = torch.einsum("i,j->ij", pos_x, self.inv_freq)
-        emb_x = torch.cat((sin_inp_x.sin(), sin_inp_x.cos()), dim=-1)
+        emb_x = get_emb(sin_inp_x)
         emb = torch.zeros((x, self.channels), device=tensor.device).type(tensor.type())
         emb[:, : self.channels] = emb_x
 
@@ -87,8 +95,8 @@ class PositionalEncoding2D(nn.Module):
         pos_y = torch.arange(y, device=tensor.device).type(self.inv_freq.type())
         sin_inp_x = torch.einsum("i,j->ij", pos_x, self.inv_freq)
         sin_inp_y = torch.einsum("i,j->ij", pos_y, self.inv_freq)
-        emb_x = torch.cat((sin_inp_x.sin(), sin_inp_x.cos()), dim=-1).unsqueeze(1)
-        emb_y = torch.cat((sin_inp_y.sin(), sin_inp_y.cos()), dim=-1)
+        emb_x = get_emb(sin_inp_x).unsqueeze(1)
+        emb_y = get_emb(sin_inp_y)
         emb = torch.zeros((x, y, self.channels * 2), device=tensor.device).type(
             tensor.type()
         )
@@ -151,13 +159,9 @@ class PositionalEncoding3D(nn.Module):
         sin_inp_x = torch.einsum("i,j->ij", pos_x, self.inv_freq)
         sin_inp_y = torch.einsum("i,j->ij", pos_y, self.inv_freq)
         sin_inp_z = torch.einsum("i,j->ij", pos_z, self.inv_freq)
-        emb_x = (
-            torch.cat((sin_inp_x.sin(), sin_inp_x.cos()), dim=-1)
-            .unsqueeze(1)
-            .unsqueeze(1)
-        )
-        emb_y = torch.cat((sin_inp_y.sin(), sin_inp_y.cos()), dim=-1).unsqueeze(1)
-        emb_z = torch.cat((sin_inp_z.sin(), sin_inp_z.cos()), dim=-1)
+        emb_x = get_emb(sin_inp_x).unsqueeze(1).unsqueeze(1)
+        emb_y = get_emb(sin_inp_y).unsqueeze(1)
+        emb_z = get_emb(sin_inp_z)
         emb = torch.zeros((x, y, z, self.channels * 3), device=tensor.device).type(
             tensor.type()
         )
