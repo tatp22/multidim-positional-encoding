@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf
 
+
 def get_emb(sin_inp):
     """
     Gets a base embedding for one dimension with sin and cos intertwined
@@ -8,6 +9,7 @@ def get_emb(sin_inp):
     emb = tf.stack((tf.sin(sin_inp), tf.cos(sin_inp)), -1)
     emb = tf.reshape(emb, (*emb.shape[:-2], -1))
     return emb
+
 
 class TFPositionalEncoding1D(tf.keras.layers.Layer):
     def __init__(self, channels: int, dtype=tf.float32):
@@ -165,7 +167,6 @@ class TFPositionalEncoding3D(tf.keras.layers.Layer):
         emb_x = tf.expand_dims(tf.expand_dims(get_emb(sin_inp_x), 1), 1)
         emb_y = tf.expand_dims(tf.expand_dims(get_emb(sin_inp_y), 1), 0)
         emb_z = tf.expand_dims(tf.expand_dims(get_emb(sin_inp_z), 0), 0)
-
 
         emb_x = tf.tile(emb_x, (1, y, z, 1))
         emb_y = tf.tile(emb_y, (x, 1, z, 1))
