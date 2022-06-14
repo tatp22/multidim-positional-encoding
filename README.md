@@ -28,6 +28,9 @@ The repo comes with the three main positional encoding models,
 `PositionalEncoding{1,2,3}D`. In addition, there are a `Summer` class that adds
 the input tensor to the positional encodings.
 
+> **⚠️ Please Note:** 
+> All positional encoding modules require tensors to hold the batch size in dim=0 (a.k.a. `batch_first=True` in pytorch). This differs from the default configuration of all nn.Transformer layers which require `(seq, batch, feature)`-shaped tensors.
+
 ```python3
 import torch
 from positional_encodings import PositionalEncoding1D, PositionalEncoding2D, PositionalEncoding3D
