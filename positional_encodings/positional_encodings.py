@@ -189,3 +189,25 @@ class PositionalEncodingPermute3D(nn.Module):
     @property
     def org_channels(self):
         return self.penc.org_channels
+
+
+class Summer(nn.Module):
+    def __init__(self, penc):
+        """
+        :param model: The type of positional encoding to run the summer on.
+        """
+        super(Summer, self).__init__()
+        self.penc = penc
+
+    def forward(self, tensor):
+        """
+        :param tensor: A 3, 4 or 5d tensor that matches the model output size
+        :return: Positional Encoding Matrix summed to the original tensor
+        """
+        penc = self.penc(tensor)
+        assert (
+            tensor.size() == penc.size()
+        ), "The original tensor size {} and the positional encoding tensor size {} must match!".format(
+            tensor.size, penc.size
+        )
+        return tensor + penc
