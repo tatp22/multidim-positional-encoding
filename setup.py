@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="positional_encodings",
-    version="6.0.0",
+    version="6.0.1",
     author="Peter Tatkowski",
     author_email="tatp22@gmail.com",
     description="1D, 2D, and 3D Sinusodal Positional Encodings in PyTorch",

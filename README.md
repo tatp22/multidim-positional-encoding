@@ -22,6 +22,9 @@ To install, simply run:
 pip install positional-encodings[pytorch,tensorflow]
 ```
 
+You can also install the pytorch and tf encodings individually with the following
+commands.
+
 * For a PyTorch only installation, run `pip install positional-encodings[pytorch]`
 * For a TensorFlow only installation, run `pip install positional-encodings[tensorflow]`
 
@@ -33,7 +36,7 @@ the input tensor to the positional encodings.
 
 ```python3
 import torch
-from positional_encodings import PositionalEncoding1D, PositionalEncoding2D, PositionalEncoding3D
+from positional_encodings.torch_encodings import PositionalEncoding1D, PositionalEncoding2D, PositionalEncoding3D, Summer
 
 # Returns the position encoding only
 p_enc_1d_model = PositionalEncoding1D(10)
@@ -65,7 +68,7 @@ instead of `PositionalEncoding1D`.
 
 ```python3
 import torch
-from positional_encodings import PositionalEncodingPermute3D
+from positional_encodings.torch_encodings import PositionalEncodingPermute3D
 
 p_enc_3d = PositionalEncodingPermute3D(11)
 z = torch.zeros((1,11,5,6,4))
@@ -78,7 +81,7 @@ This also supports Tensorflow. Simply prepend all class names with `TF`.
 
 ```python3
 import tensorflow as tf
-from positional_encodings import TFPositionalEncoding2D
+from positional_encodings.tf_encodings import TFPositionalEncoding2D, TFSummer
 
 # Returns the position encoding only
 p_enc_2d = TFPositionalEncoding2D(170)
