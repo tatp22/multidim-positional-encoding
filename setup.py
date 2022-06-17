@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="positional_encodings",
-    version="5.1.0",
+    version="6.0.0",
     author="Peter Tatkowski",
     author_email="tatp22@gmail.com",
     description="1D, 2D, and 3D Sinusodal Positional Encodings in PyTorch",
@@ -19,6 +19,10 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.6",
-    install_requires=["torch", "tensorflow", "numpy"],
+    python_requires=">=3.7",
+    install_requires=["numpy"],
+    extras_require={
+        'pytorch': ['torch'],
+        'tensorflow': ['tensorflow'],
+    }
 )

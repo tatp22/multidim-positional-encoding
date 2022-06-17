@@ -19,8 +19,11 @@ This also works on tensors of the form `(batchsize, ch, x)`, etc. See the usage 
 To install, simply run:
 
 ```
-pip install positional-encodings
+pip install positional-encodings[pytorch,tensorflow]
 ```
+
+* For a PyTorch only installation, run `pip install positional-encodings[pytorch]`
+* For a TensorFlow only installation, run `pip install positional-encodings[tensorflow]`
 
 ## Usage (PyTorch):
 
