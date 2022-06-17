@@ -16,7 +16,7 @@ only one dimension, however, this works to extend this to 2 and 3 dimensions.
 
 This also works on tensors of the form `(batchsize, ch, x)`, etc. See the usage for more information.
 
-*NOTE*: The import syntax has changed as of version `6.0.1`. See the section for details.
+**NOTE**: The import syntax has changed as of version `6.0.1`. See the section for details.
 
 To install, simply run:
 
