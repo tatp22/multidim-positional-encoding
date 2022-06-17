@@ -16,6 +16,8 @@ only one dimension, however, this works to extend this to 2 and 3 dimensions.
 
 This also works on tensors of the form `(batchsize, ch, x)`, etc. See the usage for more information.
 
+*NOTE*: The import syntax has changed as of version `6.0.1`. See the section for details.
+
 To install, simply run:
 
 ```
@@ -92,6 +94,24 @@ print(p_enc_2d(y).shape) # (1, 8, 6, 2)
 add_p_enc_2d = TFSummer(TFPositionalEncoding2D(170))
 y = tf.ones((1,8,6,2))
 print(add_p_enc_2d(y) - p_enc_2d(y)) # tf.ones((1,8,6,2))
+```
+
+## Changes as of version `6.0.1`
+
+Before `6.0.1`, users had to install both the `tensorflow` and the
+`torch` packages, both of which are quite large. Now, one can install the
+packages individually, but now the code has to be changed:
+
+If using PyTorch:
+
+```
+from positional_encodings import * -> from positional_encodings.torch_encodings import *
+```
+
+If using TensorFlow:
+
+```
+from positional_encodings import * -> from positional_encodings.tf_encodings import *
 ```
 
 ## Formulas
