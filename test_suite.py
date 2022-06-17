@@ -4,7 +4,8 @@ import numpy as np
 import tensorflow as tf
 import torch
 
-from positional_encodings import *
+from positional_encodings.tf_encodings import *
+from positional_encodings.torch_encodings import *
 
 tf.config.experimental_run_functions_eagerly(True)
 

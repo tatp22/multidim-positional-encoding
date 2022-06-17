@@ -16,11 +16,16 @@ only one dimension, however, this works to extend this to 2 and 3 dimensions.
 
 This also works on tensors of the form `(batchsize, ch, x)`, etc. See the usage for more information.
 
+*NOTE*: The import syntax has changed as of version `6.0.1`. See the section for details.
+
 To install, simply run:
 
 ```
 pip install positional-encodings[pytorch,tensorflow]
 ```
+
+You can also install the pytorch and tf encodings individually with the following
+commands.
 
 * For a PyTorch only installation, run `pip install positional-encodings[pytorch]`
 * For a TensorFlow only installation, run `pip install positional-encodings[tensorflow]`
@@ -33,7 +38,7 @@ the input tensor to the positional encodings.
 
 ```python3
 import torch
-from positional_encodings import PositionalEncoding1D, PositionalEncoding2D, PositionalEncoding3D
+from positional_encodings.torch_encodings import PositionalEncoding1D, PositionalEncoding2D, PositionalEncoding3D, Summer
 
 # Returns the position encoding only
 p_enc_1d_model = PositionalEncoding1D(10)
@@ -65,7 +70,7 @@ instead of `PositionalEncoding1D`.
 
 ```python3
 import torch
-from positional_encodings import PositionalEncodingPermute3D
+from positional_encodings.torch_encodings import PositionalEncodingPermute3D
 
 p_enc_3d = PositionalEncodingPermute3D(11)
 z = torch.zeros((1,11,5,6,4))
@@ -78,7 +83,7 @@ This also supports Tensorflow. Simply prepend all class names with `TF`.
 
 ```python3
 import tensorflow as tf
-from positional_encodings import TFPositionalEncoding2D
+from positional_encodings.tf_encodings import TFPositionalEncoding2D, TFSummer
 
 # Returns the position encoding only
 p_enc_2d = TFPositionalEncoding2D(170)
@@ -89,6 +94,24 @@ print(p_enc_2d(y).shape) # (1, 8, 6, 2)
 add_p_enc_2d = TFSummer(TFPositionalEncoding2D(170))
 y = tf.ones((1,8,6,2))
 print(add_p_enc_2d(y) - p_enc_2d(y)) # tf.ones((1,8,6,2))
+```
+
+## Changes as of version `6.0.1`
+
+Before `6.0.1`, users had to install both the `tensorflow` and the
+`torch` packages, both of which are quite large. Now, one can install the
+packages individually, but now the code has to be changed:
+
+If using PyTorch:
+
+```
+from positional_encodings import * -> from positional_encodings.torch_encodings import *
+```
+
+If using TensorFlow:
+
+```
+from positional_encodings import * -> from positional_encodings.tf_encodings import *
 ```
 
 ## Formulas
