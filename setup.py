@@ -22,7 +22,7 @@ setuptools.setup(
     python_requires=">=3.7",
     install_requires=["numpy"],
     extras_require={
-        'pytorch': ['torch'],
-        'tensorflow': ['tensorflow'],
-    }
+        "pytorch": ["torch"],
+        "tensorflow": ["tensorflow"],
+    },
 )
