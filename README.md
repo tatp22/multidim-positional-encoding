@@ -5,6 +5,8 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+![A 2D Example](./pos_enc_2d.png)
+
 This is a practical, easy to download implemenation of 1D, 2D, and 3D
 sinusodial positional encodings for PyTorch and Tensorflow.
 
