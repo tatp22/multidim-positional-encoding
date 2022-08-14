@@ -208,6 +208,6 @@ class Summer(nn.Module):
         assert (
             tensor.size() == penc.size()
         ), "The original tensor size {} and the positional encoding tensor size {} must match!".format(
-            tensor.size, penc.size
+            tensor.size(), penc.size()
         )
         return tensor + penc
