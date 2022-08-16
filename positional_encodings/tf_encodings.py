@@ -197,6 +197,6 @@ class TFSummer(tf.keras.layers.Layer):
         assert (
             tensor.shape == penc.shape
         ), "The original tensor size {} and the positional encoding tensor size {} must match!".format(
-            tensor.size, penc.size
+            tensor.shape, penc.shape
         )
         return tensor + penc
