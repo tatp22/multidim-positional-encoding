@@ -204,7 +204,7 @@ class Summer(nn.Module):
         :param tensor: A 3, 4 or 5d tensor that matches the model output size
         :return: Positional Encoding Matrix summed to the original tensor
         """
-        penc = self.penc(tensor)
+        penc = self.penc(tensor).to(tensor.device)
         assert (
             tensor.size() == penc.size()
         ), "The original tensor size {} and the positional encoding tensor size {} must match!".format(
