@@ -22,7 +22,7 @@ class PositionalEncoding1D(nn.Module):
         self.channels = channels
         inv_freq = 1.0 / (10000 ** (torch.arange(0, channels, 2).float() / channels))
         self.register_buffer("inv_freq", inv_freq)
-        self.cached_penc = None
+        self.register_buffer("cached_penc", None)
 
     def forward(self, tensor):
         """
@@ -76,7 +76,7 @@ class PositionalEncoding2D(nn.Module):
         self.channels = channels
         inv_freq = 1.0 / (10000 ** (torch.arange(0, channels, 2).float() / channels))
         self.register_buffer("inv_freq", inv_freq)
-        self.cached_penc = None
+        self.register_buffer("cached_penc", None)
 
     def forward(self, tensor):
         """
@@ -138,7 +138,7 @@ class PositionalEncoding3D(nn.Module):
         self.channels = channels
         inv_freq = 1.0 / (10000 ** (torch.arange(0, channels, 2).float() / channels))
         self.register_buffer("inv_freq", inv_freq)
-        self.cached_penc = None
+        self.register_buffer("cached_penc", None)
 
     def forward(self, tensor):
         """
@@ -204,7 +204,7 @@ class Summer(nn.Module):
         :param tensor: A 3, 4 or 5d tensor that matches the model output size
         :return: Positional Encoding Matrix summed to the original tensor
         """
-        penc = self.penc(tensor).to(tensor.device)
+        penc = self.penc(tensor)
         assert (
             tensor.size() == penc.size()
         ), "The original tensor size {} and the positional encoding tensor size {} must match!".format(
