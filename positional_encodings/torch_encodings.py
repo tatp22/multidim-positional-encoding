@@ -22,7 +22,7 @@ class PositionalEncoding1D(nn.Module):
         self.channels = channels
         inv_freq = 1.0 / (10000 ** (torch.arange(0, channels, 2).float() / channels))
         self.register_buffer("inv_freq", inv_freq)
-        self.cached_penc = None
+        self.register_buffer("cached_penc", None)
 
     def forward(self, tensor):
         """
@@ -76,7 +76,7 @@ class PositionalEncoding2D(nn.Module):
         self.channels = channels
         inv_freq = 1.0 / (10000 ** (torch.arange(0, channels, 2).float() / channels))
         self.register_buffer("inv_freq", inv_freq)
-        self.cached_penc = None
+        self.register_buffer("cached_penc", None)
 
     def forward(self, tensor):
         """
@@ -138,7 +138,7 @@ class PositionalEncoding3D(nn.Module):
         self.channels = channels
         inv_freq = 1.0 / (10000 ** (torch.arange(0, channels, 2).float() / channels))
         self.register_buffer("inv_freq", inv_freq)
-        self.cached_penc = None
+        self.register_buffer("cached_penc", None)
 
     def forward(self, tensor):
         """
