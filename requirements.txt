@@ -52,7 +52,7 @@ tensorflow-io-gcs-filesystem==0.33.0
 termcolor==2.3.0
 torch==2.0.1
 triton==2.0.0
-typing_extensions==4.5.0
+typing-extensions>=4.7.1
 urllib3==1.26.16
 Werkzeug==2.3.7
 wrapt==1.15.0
