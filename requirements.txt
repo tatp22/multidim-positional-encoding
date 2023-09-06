@@ -4,7 +4,6 @@ cachetools==5.3.1
 certifi==2023.7.22
 charset-normalizer==3.2.0
 cmake==3.27.4.1
-filelock==3.12.3
 flatbuffers==23.5.26
 gast==0.4.0
 google-auth==2.22.0
@@ -52,7 +51,7 @@ tensorflow-io-gcs-filesystem==0.33.0
 termcolor==2.3.0
 torch==2.0.1
 triton==2.0.0
-typing-extensions>=4.7.1
+typing_extensions==4.5.0
 urllib3==1.26.16
 Werkzeug==2.3.7
 wrapt==1.15.0
