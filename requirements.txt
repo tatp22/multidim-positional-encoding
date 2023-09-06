@@ -4,6 +4,7 @@ cachetools==5.3.1
 certifi==2023.7.22
 charset-normalizer==3.2.0
 cmake==3.27.4.1
+filelock==3.12.3
 flatbuffers==23.5.26
 gast==0.4.0
 google-auth==2.22.0
