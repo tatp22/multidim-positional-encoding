@@ -37,10 +37,10 @@ class PositionalEncoding1D(nn.Module):
 
         self.cached_penc = None
         batch_size, x, orig_ch = tensor.shape
-        pos_x = torch.arange(x, device=tensor.device).type(self.inv_freq.type())
+        pos_x = torch.arange(x, device=tensor.device, dtype=self.inv_freq.dtype)
         sin_inp_x = torch.einsum("i,j->ij", pos_x, self.inv_freq)
         emb_x = get_emb(sin_inp_x)
-        emb = torch.zeros((x, self.channels), device=tensor.device).type(tensor.type())
+        emb = torch.zeros((x, self.channels), device=tensor.device, dtype=tensor.dtype)
         emb[:, : self.channels] = emb_x
 
         self.cached_penc = emb[None, :, :orig_ch].repeat(batch_size, 1, 1)
@@ -91,14 +91,16 @@ class PositionalEncoding2D(nn.Module):
 
         self.cached_penc = None
         batch_size, x, y, orig_ch = tensor.shape
-        pos_x = torch.arange(x, device=tensor.device).type(self.inv_freq.type())
-        pos_y = torch.arange(y, device=tensor.device).type(self.inv_freq.type())
+        pos_x = torch.arange(x, device=tensor.device, dtype=self.inv_freq.dtype)
+        pos_y = torch.arange(y, device=tensor.device, dtype=self.inv_freq.dtype)
         sin_inp_x = torch.einsum("i,j->ij", pos_x, self.inv_freq)
         sin_inp_y = torch.einsum("i,j->ij", pos_y, self.inv_freq)
         emb_x = get_emb(sin_inp_x).unsqueeze(1)
         emb_y = get_emb(sin_inp_y)
-        emb = torch.zeros((x, y, self.channels * 2), device=tensor.device).type(
-            tensor.type()
+        emb = torch.zeros(
+            (x, y, self.channels * 2),
+            device=tensor.device,
+            dtype=tensor.dtype,
         )
         emb[:, :, : self.channels] = emb_x
         emb[:, :, self.channels : 2 * self.channels] = emb_y
@@ -153,17 +155,19 @@ class PositionalEncoding3D(nn.Module):
 
         self.cached_penc = None
         batch_size, x, y, z, orig_ch = tensor.shape
-        pos_x = torch.arange(x, device=tensor.device).type(self.inv_freq.type())
-        pos_y = torch.arange(y, device=tensor.device).type(self.inv_freq.type())
-        pos_z = torch.arange(z, device=tensor.device).type(self.inv_freq.type())
+        pos_x = torch.arange(x, device=tensor.device, dtype=self.inv_freq.dtype)
+        pos_y = torch.arange(y, device=tensor.device, dtype=self.inv_freq.dtype)
+        pos_z = torch.arange(z, device=tensor.device, dtype=self.inv_freq.dtype)
         sin_inp_x = torch.einsum("i,j->ij", pos_x, self.inv_freq)
         sin_inp_y = torch.einsum("i,j->ij", pos_y, self.inv_freq)
         sin_inp_z = torch.einsum("i,j->ij", pos_z, self.inv_freq)
         emb_x = get_emb(sin_inp_x).unsqueeze(1).unsqueeze(1)
         emb_y = get_emb(sin_inp_y).unsqueeze(1)
         emb_z = get_emb(sin_inp_z)
-        emb = torch.zeros((x, y, z, self.channels * 3), device=tensor.device).type(
-            tensor.type()
+        emb = torch.zeros(
+            (x, y, z, self.channels * 3),
+            device=tensor.device,
+            dtype=tensor.dtype,
         )
         emb[:, :, :, : self.channels] = emb_x
         emb[:, :, :, self.channels : 2 * self.channels] = emb_y
