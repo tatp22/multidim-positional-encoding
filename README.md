@@ -32,7 +32,9 @@ commands.
 * For a PyTorch only installation, run `pip install positional-encodings[pytorch]`
 * For a TensorFlow only installation, run `pip install positional-encodings[tensorflow]`
 
-## Usage (PyTorch):
+## Usage:
+
+### Pytorch
 
 The repo comes with the three main positional encoding models,
 `PositionalEncoding{1,2,3}D`. In addition, there are a `Summer` class that adds
@@ -78,6 +80,15 @@ p_enc_3d = PositionalEncodingPermute3D(11)
 z = torch.zeros((1,11,5,6,4))
 print(p_enc_3d(z).shape) # (1, 11, 5, 6, 4)
 ```
+
+Note to override the output dtype you can specify it when creating the encoding:
+
+```python3
+p_enc_3d = PositionalEncodingPermute3D(11, dtype_override=torch.float64)
+```
+
+This is particularly useful when the input tensor is of an `int` type since the
+output will always be zero (see issue #39).
 
 ### Tensorflow Keras
 

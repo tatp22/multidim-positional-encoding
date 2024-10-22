@@ -141,3 +141,30 @@ def test_tf_summer():
         np.sum(np.abs((model_wo_sum(z) + z).numpy() - model_with_sum(z).numpy()))
         < 0.0001
     ), "The tf summer is not working properly!"
+
+
+def test_torch_1d_dtype_override():
+    penc = PositionalEncoding1D(10, dtype_override=torch.float32)
+    penc_permute = PositionalEncodingPermute1D(6, dtype_override=torch.float64)
+    x = torch.zeros((1, 6, 10), dtype=torch.int64)
+
+    assert penc(x).dtype == torch.float32
+    assert penc_permute(x).dtype == torch.float64
+
+
+def test_torch_2d_dtype_override():
+    penc = PositionalEncoding2D(10, dtype_override=torch.float32)
+    penc_permute = PositionalEncodingPermute2D(6, dtype_override=torch.float64)
+    x = torch.zeros((1, 6, 6, 10), dtype=torch.int64)
+
+    assert penc(x).dtype == torch.float32
+    assert penc_permute(x).dtype == torch.float64
+
+
+def test_torch_3d_dtype_override():
+    penc = PositionalEncoding3D(10, dtype_override=torch.float32)
+    penc_permute = PositionalEncodingPermute3D(6, dtype_override=torch.float64)
+    x = torch.zeros((1, 6, 6, 6, 10), dtype=torch.int64)
+
+    assert penc(x).dtype == torch.float32
+    assert penc_permute(x).dtype == torch.float64
