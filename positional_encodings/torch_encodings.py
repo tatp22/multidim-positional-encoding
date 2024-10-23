@@ -230,4 +230,4 @@ class Summer(nn.Module):
         ), "The original tensor size {} and the positional encoding tensor size {} must match!".format(
             tensor.size(), penc.size()
         )
-        return tensor + penc
+        return tensor + penc.to(tensor.device)
