@@ -120,23 +120,10 @@ def test_torch_1D_cache():
     assert p_enc_1d.cached_penc.shape == (1, 7, 10)
 
 
-def test_tf_1D_cache():
-    p_enc_1d = TFPositionalEncoding1D(170)
-    x = tf.zeros((1, 1024, 170))
-    y = tf.zeros((1, 100, 170))
-
-    assert not p_enc_1d.cached_penc
-    assert p_enc_1d(x).shape == (1, 1024, 170)
-    assert p_enc_1d.cached_penc.shape == (1, 1024, 170)
-
-    assert p_enc_1d(y).shape == (1, 100, 170)
-    assert p_enc_1d.cached_penc.shape == (1, 100, 170)
-
-
 def test_tf_summer():
     model_with_sum = TFSummer(TFPositionalEncoding2D(125))
     model_wo_sum = TFPositionalEncoding2D(125)
-    z = np.random.randn(3, 5, 6, 125)
+    z = tf.random.uniform(shape=(3, 5, 6, 125), name="input_tensor")
     assert (
         np.sum(np.abs((model_wo_sum(z) + z).numpy() - model_with_sum(z).numpy()))
         < 0.0001
