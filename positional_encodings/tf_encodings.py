@@ -47,9 +47,7 @@ class TFPositionalEncoding1D(tf.keras.layers.Layer):
         sin_inp_x = tf.einsum("i,j->ij", pos_x, self.inv_freq)
         emb = tf.expand_dims(get_emb(sin_inp_x), 0)
         emb = emb[0]  # A bit of a hack
-        return tf.repeat(
-            emb[None, :, :org_channels], tf.shape(inputs)[0], axis=0
-        )
+        return tf.repeat(emb[None, :, :org_channels], tf.shape(inputs)[0], axis=0)
 
 
 class TFPositionalEncoding2D(tf.keras.layers.Layer):
@@ -97,9 +95,7 @@ class TFPositionalEncoding2D(tf.keras.layers.Layer):
         emb_x = tf.tile(emb_x, (1, y, 1))
         emb_y = tf.tile(emb_y, (x, 1, 1))
         emb = tf.concat((emb_x, emb_y), -1)
-        return tf.repeat(
-            emb[None, :, :, :org_channels], tf.shape(inputs)[0], axis=0
-        )
+        return tf.repeat(emb[None, :, :, :org_channels], tf.shape(inputs)[0], axis=0)
 
 
 class TFPositionalEncoding3D(tf.keras.layers.Layer):
@@ -155,9 +151,7 @@ class TFPositionalEncoding3D(tf.keras.layers.Layer):
         emb_z = tf.tile(emb_z, (x, y, 1, 1))
 
         emb = tf.concat((emb_x, emb_y, emb_z), -1)
-        return tf.repeat(
-            emb[None, :, :, :, :org_channels], tf.shape(inputs)[0], axis=0
-        )
+        return tf.repeat(emb[None, :, :, :, :org_channels], tf.shape(inputs)[0], axis=0)
 
 
 class TFSummer(tf.keras.layers.Layer):
