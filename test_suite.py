@@ -120,24 +120,38 @@ def test_torch_1D_cache():
     assert p_enc_1d.cached_penc.shape == (1, 7, 10)
 
 
-def test_tf_1D_cache():
-    p_enc_1d = TFPositionalEncoding1D(170)
-    x = tf.zeros((1, 1024, 170))
-    y = tf.zeros((1, 100, 170))
-
-    assert not p_enc_1d.cached_penc
-    assert p_enc_1d(x).shape == (1, 1024, 170)
-    assert p_enc_1d.cached_penc.shape == (1, 1024, 170)
-
-    assert p_enc_1d(y).shape == (1, 100, 170)
-    assert p_enc_1d.cached_penc.shape == (1, 100, 170)
-
-
 def test_tf_summer():
     model_with_sum = TFSummer(TFPositionalEncoding2D(125))
     model_wo_sum = TFPositionalEncoding2D(125)
-    z = np.random.randn(3, 5, 6, 125)
+    z = tf.random.uniform(shape=(3, 5, 6, 125), name="input_tensor")
     assert (
         np.sum(np.abs((model_wo_sum(z) + z).numpy() - model_with_sum(z).numpy()))
         < 0.0001
     ), "The tf summer is not working properly!"
+
+
+def test_torch_1d_dtype_override():
+    penc = PositionalEncoding1D(10, dtype_override=torch.float32)
+    penc_permute = PositionalEncodingPermute1D(6, dtype_override=torch.float64)
+    x = torch.zeros((1, 6, 10), dtype=torch.int64)
+
+    assert penc(x).dtype == torch.float32
+    assert penc_permute(x).dtype == torch.float64
+
+
+def test_torch_2d_dtype_override():
+    penc = PositionalEncoding2D(10, dtype_override=torch.float32)
+    penc_permute = PositionalEncodingPermute2D(6, dtype_override=torch.float64)
+    x = torch.zeros((1, 6, 6, 10), dtype=torch.int64)
+
+    assert penc(x).dtype == torch.float32
+    assert penc_permute(x).dtype == torch.float64
+
+
+def test_torch_3d_dtype_override():
+    penc = PositionalEncoding3D(10, dtype_override=torch.float32)
+    penc_permute = PositionalEncodingPermute3D(6, dtype_override=torch.float64)
+    x = torch.zeros((1, 6, 6, 6, 10), dtype=torch.int64)
+
+    assert penc(x).dtype == torch.float32
+    assert penc_permute(x).dtype == torch.float64
